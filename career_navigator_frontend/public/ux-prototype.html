@@ -1,0 +1,3120 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="color-scheme" content="light" />
+  <title>Career Navigator — End-to-End UX Prototype</title>
+  <style>
+    :root{
+      --bg: #f9fafb;
+      --surface: #ffffff;
+      --surface-2:#f3f4f6;
+      --text:#111827;
+      --muted:#6b7280;
+      --border:#e5e7eb;
+      --primary:#3b82f6;
+      --primary-2:#2563eb;
+      --success:#06b6d4;
+      --danger:#ef4444;
+      --warning:#f59e0b;
+      --shadow: 0 8px 22px rgba(17,24,39,.08);
+      --radius: 14px;
+      --radius-sm: 10px;
+      --focus: 0 0 0 3px rgba(59,130,246,.25);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+      --sans: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background: radial-gradient(1200px 600px at 10% 0%, rgba(59,130,246,.10), transparent 55%),
+                  radial-gradient(1000px 600px at 90% 0%, rgba(6,182,212,.10), transparent 55%),
+                  var(--bg);
+    }
+    a{color:inherit}
+    button,input,select,textarea{font:inherit}
+    .app{
+      min-height:100%;
+      display:grid;
+      grid-template-columns: 280px 1fr;
+    }
+    .sidebar{
+      position:sticky;
+      top:0;
+      height:100vh;
+      padding:18px 14px;
+      border-right:1px solid var(--border);
+      background: rgba(255,255,255,.75);
+      backdrop-filter: blur(10px);
+    }
+    .brand{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      padding:10px 10px 14px;
+      border-bottom:1px solid var(--border);
+      margin-bottom:12px;
+    }
+    .logo{
+      width:38px;height:38px;border-radius:12px;
+      background: linear-gradient(135deg, rgba(59,130,246,1), rgba(6,182,212,1));
+      box-shadow: var(--shadow);
+    }
+    .brand h1{
+      margin:0;
+      font-size:14px;
+      letter-spacing:.2px;
+      line-height:1.1;
+    }
+    .brand .sub{
+      font-size:12px;
+      color:var(--muted);
+      margin-top:2px;
+    }
+    .nav{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      padding:6px;
+    }
+    .nav .group-title{
+      margin:14px 10px 6px;
+      font-size:11px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color:var(--muted);
+    }
+    .nav a{
+      text-decoration:none;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 10px;
+      border-radius:12px;
+      border:1px solid transparent;
+      color: #0f172a;
+    }
+    .nav a:hover{background:rgba(59,130,246,.08)}
+    .nav a.active{
+      background:rgba(59,130,246,.12);
+      border-color: rgba(59,130,246,.20);
+    }
+    .badge{
+      margin-left:auto;
+      font-size:11px;
+      padding:2px 8px;
+      border-radius:999px;
+      background:var(--surface-2);
+      border:1px solid var(--border);
+      color:var(--muted);
+    }
+    .sidebar-footer{
+      position:absolute;
+      left:14px; right:14px;
+      bottom:14px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+    .tiny{
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.35;
+    }
+
+    .main{
+      min-width:0;
+      padding:18px 20px 44px;
+    }
+    .topbar{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      justify-content:space-between;
+      padding:12px 12px;
+      background: rgba(255,255,255,.75);
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      margin-bottom:14px;
+    }
+    .topbar .left{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      min-width:0;
+    }
+    .crumb{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      color:var(--muted);
+      font-size:12px;
+      min-width:0;
+    }
+    .crumb b{
+      color:var(--text);
+      font-weight:700;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width: 48vw;
+      display:inline-block;
+      vertical-align:bottom;
+    }
+    .topbar .right{
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+    .search{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 10px;
+      border-radius: 12px;
+      background: var(--surface);
+      border:1px solid var(--border);
+      min-width: 280px;
+    }
+    .search input{
+      border:0;
+      outline:none;
+      width:100%;
+      background:transparent;
+      color:var(--text);
+    }
+    .pill{
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
+    }
+    .btn{
+      border:1px solid var(--border);
+      background: var(--surface);
+      color:var(--text);
+      border-radius: 12px;
+      padding:9px 12px;
+      cursor:pointer;
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      user-select:none;
+      white-space:nowrap;
+    }
+    .btn:hover{border-color: rgba(59,130,246,.35)}
+    .btn:focus{outline:none; box-shadow: var(--focus)}
+    .btn.primary{
+      background: linear-gradient(135deg, var(--primary), var(--success));
+      border-color: rgba(59,130,246,.2);
+      color:white;
+    }
+    .btn.primary:hover{filter: brightness(.98)}
+    .btn.danger{
+      background: rgba(239,68,68,.08);
+      border-color: rgba(239,68,68,.25);
+      color: #991b1b;
+    }
+    .btn.ghost{
+      background:transparent;
+      border-color:transparent;
+      color:var(--muted);
+    }
+    .btn.small{
+      padding:7px 10px;
+      border-radius:10px;
+      font-size:12px;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:14px;
+    }
+    .row{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:14px;
+    }
+    .card{
+      background: rgba(255,255,255,.85);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding:14px;
+      overflow:hidden;
+    }
+    .card h2{
+      margin:0 0 8px;
+      font-size:16px;
+      letter-spacing:.2px;
+    }
+    .card h3{
+      margin:0 0 8px;
+      font-size:14px;
+    }
+    .muted{color:var(--muted)}
+    .kpi{
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+    }
+    .kpi .num{
+      font-size:24px;
+      font-weight:800;
+      letter-spacing:-.02em;
+    }
+    .kpi .lbl{
+      color:var(--muted);
+      font-size:12px;
+    }
+    .progress{
+      height:10px;
+      border-radius: 999px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      overflow:hidden;
+    }
+    .progress > div{
+      height:100%;
+      background: linear-gradient(90deg, var(--primary), var(--success));
+      width:0%;
+    }
+    .split{
+      display:grid;
+      grid-template-columns: 1.35fr .65fr;
+      gap:14px;
+      align-items:start;
+    }
+    .table{
+      width:100%;
+      border-collapse:collapse;
+      overflow:hidden;
+      border-radius: 12px;
+      border:1px solid var(--border);
+      background: var(--surface);
+    }
+    .table th, .table td{
+      text-align:left;
+      padding:10px 10px;
+      border-bottom:1px solid var(--border);
+      font-size:13px;
+      vertical-align:top;
+    }
+    .table th{
+      font-size:12px;
+      color:var(--muted);
+      background: var(--surface-2);
+    }
+    .table tr:last-child td{border-bottom:0}
+    .chip{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:4px 8px;
+      border-radius:999px;
+      font-size:12px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.9);
+      color: var(--text);
+    }
+    .chip.good{border-color: rgba(6,182,212,.35); background: rgba(6,182,212,.10)}
+    .chip.warn{border-color: rgba(245,158,11,.35); background: rgba(245,158,11,.12)}
+    .chip.bad{border-color: rgba(239,68,68,.35); background: rgba(239,68,68,.10)}
+    .form{
+      display:grid;
+      gap:10px;
+    }
+    .field{
+      display:grid;
+      gap:6px;
+    }
+    label{
+      font-size:12px;
+      color:var(--muted);
+    }
+    input[type="text"], input[type="email"], input[type="password"], textarea, select{
+      width:100%;
+      padding:10px 10px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.95);
+      outline:none;
+    }
+    input:focus, textarea:focus, select:focus{box-shadow: var(--focus); border-color: rgba(59,130,246,.35)}
+    textarea{min-height:88px; resize:vertical}
+    .two{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+    }
+    .steps{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .step{
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.9);
+      color:var(--muted);
+    }
+    .step.active{border-color: rgba(59,130,246,.35); color: #0f172a; background: rgba(59,130,246,.10)}
+    .notice{
+      padding:10px 12px;
+      border-radius: 12px;
+      border:1px dashed rgba(59,130,246,.35);
+      background: rgba(59,130,246,.08);
+      color:#0b3a86;
+      font-size:13px;
+      line-height:1.35;
+    }
+    .toast{
+      position:fixed;
+      right:16px;
+      bottom:16px;
+      width:min(420px, calc(100vw - 32px));
+      background: rgba(17,24,39,.92);
+      color:white;
+      border:1px solid rgba(255,255,255,.12);
+      border-radius: 14px;
+      box-shadow: 0 18px 45px rgba(0,0,0,.25);
+      padding:12px;
+      display:none;
+      z-index: 1000;
+    }
+    .toast.show{display:block}
+    .toast .title{font-weight:800; margin:0 0 4px; font-size:13px}
+    .toast .msg{margin:0; color: rgba(255,255,255,.8); font-size:12px; line-height:1.35}
+    .modal-backdrop{
+      position:fixed; inset:0;
+      background: rgba(0,0,0,.35);
+      display:none;
+      z-index: 999;
+      padding:18px;
+    }
+    .modal-backdrop.show{display:grid; place-items:center}
+    .modal{
+      width:min(820px, 100%);
+      max-height: calc(100vh - 36px);
+      overflow:auto;
+      background: rgba(255,255,255,.97);
+      border:1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 22px 70px rgba(0,0,0,.25);
+      padding:14px;
+    }
+    .modal-header{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      padding-bottom:10px;
+      border-bottom:1px solid var(--border);
+      margin-bottom:12px;
+    }
+    .modal-header h2{margin:0;font-size:15px}
+    .modal-header p{margin:4px 0 0;color:var(--muted);font-size:12px}
+    .modal-actions{display:flex;gap:8px;flex-wrap:wrap}
+    .kanban{
+      display:grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap:12px;
+    }
+    .lane{
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.85);
+      border-radius: 14px;
+      padding:10px;
+      box-shadow: var(--shadow);
+      min-height: 260px;
+    }
+    .lane h4{margin:0 0 8px;font-size:12px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+    .jobcard{
+      border:1px solid var(--border);
+      background: rgba(249,250,251,.95);
+      border-radius: 12px;
+      padding:10px;
+      margin-bottom:8px;
+    }
+    .jobcard b{font-size:13px}
+    .jobcard .meta{font-size:12px;color:var(--muted);margin-top:4px}
+    .footer-note{
+      margin-top:10px;
+      font-size:12px;
+      color:var(--muted);
+    }
+    .sr-only{
+      position:absolute;
+      width:1px;
+      height:1px;
+      padding:0;
+      margin:-1px;
+      overflow:hidden;
+      clip:rect(0,0,0,0);
+      border:0;
+    }
+
+    /* Mobile adjustments */
+    @media (max-width: 980px){
+      .app{grid-template-columns: 1fr}
+      .sidebar{position:relative;height:auto}
+      .sidebar-footer{position:relative;left:auto;right:auto;bottom:auto}
+      .row{grid-template-columns: 1fr}
+      .split{grid-template-columns: 1fr}
+      .search{min-width: 180px}
+      .kanban{grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <aside class="sidebar" aria-label="Primary navigation">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>Career Navigator</h1>
+          <div class="sub">Clickable UX prototype</div>
+        </div>
+      </div>
+
+      <nav class="nav" id="sideNav">
+        <div class="group-title">User</div>
+        <a href="#welcome" data-route="welcome">Welcome</a>
+        <a href="#auth" data-route="auth">Sign up / Login</a>
+        <a href="#onboarding" data-route="onboarding">Onboarding</a>
+        <a href="#recommendations" data-route="recommendations">Recommendations <span class="badge" id="recCountBadge">0</span></a>
+        <a href="#career" data-route="career">Career Details</a>
+        <a href="#roadmap" data-route="roadmap">Roadmap</a>
+        <a href="#checklists" data-route="checklists">Resume & Portfolio</a>
+        <a href="#jobtracker" data-route="jobtracker">Job Tracker</a>
+        <a href="#saved" data-route="saved">Saved Careers <span class="badge" id="savedCountBadge">0</span></a>
+        <a href="#profile" data-route="profile">Account / Profile</a>
+
+        <div class="group-title">Admin</div>
+        <a href="#admin" data-route="admin">Admin CMS</a>
+        <a href="#analytics" data-route="analytics">Analytics</a>
+
+        <div class="group-title">Help</div>
+        <a href="#about" data-route="about">Prototype Notes</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="tiny">
+          <b>Data is simulated.</b> Actions update in-page state only to demonstrate end-to-end flows.
+        </div>
+        <button class="btn small" id="resetBtn" type="button">Reset demo data</button>
+      </div>
+    </aside>
+
+    <main class="main" aria-label="Main content">
+      <header class="topbar" role="banner">
+        <div class="left">
+          <div class="crumb" aria-label="Breadcrumb">
+            <span class="pill" id="rolePill">Guest</span>
+            <span aria-hidden="true">/</span>
+            <b id="crumbTitle">Welcome</b>
+          </div>
+        </div>
+        <div class="right">
+          <div class="search" role="search">
+            <span aria-hidden="true">⌕</span>
+            <label class="sr-only" for="globalSearch">Search</label>
+            <input id="globalSearch" type="text" placeholder="Search careers, skills, resources..." />
+          </div>
+          <button class="btn" type="button" id="quickSaveCareerBtn" title="Save current career">★ Save</button>
+          <button class="btn primary" type="button" id="primaryCtaBtn">Get started</button>
+        </div>
+      </header>
+
+      <!-- ROUTES (sections) -->
+      <section class="route" id="route-welcome" data-title="Welcome">
+        <div class="grid">
+          <div class="card">
+            <h2>Find a career path that fits you — then plan how to get there.</h2>
+            <p class="muted" style="margin:0 0 10px; line-height:1.5">
+              This prototype demonstrates the end-to-end UX: onboarding questionnaire → AI-style recommendations with explanations →
+              career detail pages → learning roadmap with progress → resume/portfolio checklists → job application tracker →
+              saved careers → profile/account → admin CMS → analytics.
+            </p>
+            <div class="notice">
+              Tip: Use the left navigation to jump around, or follow the guided CTAs.
+              This is a single HTML file with embedded CSS/JS (no backend required).
+            </div>
+            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
+              <button class="btn primary" type="button" data-nav="#auth">Sign up / Login</button>
+              <button class="btn" type="button" data-nav="#onboarding">Start onboarding</button>
+              <button class="btn" type="button" data-nav="#admin">Explore admin CMS</button>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="card">
+              <h3>What you’ll accomplish</h3>
+              <ul style="margin:0; padding-left:18px; color:var(--muted); line-height:1.6">
+                <li>Identify interests, skills, and preferences</li>
+                <li>Review matched careers with transparent explanations</li>
+                <li>Generate a learning roadmap with milestones</li>
+                <li>Track resume / portfolio readiness</li>
+                <li>Track job applications in list + kanban</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h3>Demo state</h3>
+              <div class="kpi">
+                <div>
+                  <div class="num" id="kpiOnboardPct">0%</div>
+                  <div class="lbl">Onboarding complete</div>
+                </div>
+                <div style="flex:1">
+                  <div class="progress" aria-label="Onboarding progress">
+                    <div id="kpiOnboardBar" style="width:0%"></div>
+                  </div>
+                  <div class="footer-note" id="kpiSummary">Complete onboarding to unlock recommendations.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Quick paths</h3>
+            <div class="steps">
+              <span class="step" id="stepAuth">1. Auth</span>
+              <span class="step" id="stepOnboarding">2. Onboarding</span>
+              <span class="step" id="stepRecs">3. Recommendations</span>
+              <span class="step" id="stepCareer">4. Career Details</span>
+              <span class="step" id="stepRoadmap">5. Roadmap</span>
+              <span class="step" id="stepTools">6. Tools</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="route" id="route-auth" data-title="Sign up / Login" hidden>
+        <div class="split">
+          <div class="card">
+            <h2>Welcome back</h2>
+            <p class="muted" style="margin-top:0; line-height:1.5">Sign in to access your saved careers, roadmaps, and job tracker.</p>
+
+            <form class="form" id="loginForm">
+              <div class="field">
+                <label for="loginEmail">Email</label>
+                <input id="loginEmail" type="email" value="sarah@example.com" required />
+              </div>
+              <div class="field">
+                <label for="loginPassword">Password</label>
+                <input id="loginPassword" type="password" value="Password123" required />
+              </div>
+              <div style="display:flex; gap:10px; flex-wrap:wrap">
+                <button class="btn primary" type="submit">Login</button>
+                <button class="btn" type="button" id="mockForgotBtn">Forgot password</button>
+              </div>
+              <div class="footer-note">Demo: any credentials will “work”.</div>
+            </form>
+          </div>
+
+          <div class="card">
+            <h2>Create an account</h2>
+            <p class="muted" style="margin-top:0; line-height:1.5">Register to save progress and personalize recommendations.</p>
+
+            <form class="form" id="signupForm">
+              <div class="two">
+                <div class="field">
+                  <label for="firstName">First name</label>
+                  <input id="firstName" type="text" value="Sarah" required />
+                </div>
+                <div class="field">
+                  <label for="lastName">Last name</label>
+                  <input id="lastName" type="text" value="Nguyen" required />
+                </div>
+              </div>
+              <div class="field">
+                <label for="signupEmail">Email</label>
+                <input id="signupEmail" type="email" value="sarah@example.com" required />
+              </div>
+              <div class="field">
+                <label for="signupPassword">Password</label>
+                <input id="signupPassword" type="password" value="Password123" required />
+                <div class="tiny">Minimum 8 characters, includes letters + numbers (simulated).</div>
+              </div>
+              <button class="btn primary" type="submit">Create account</button>
+              <div class="footer-note">After sign up, you’ll be guided to onboarding.</div>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <section class="route" id="route-onboarding" data-title="Onboarding Questionnaire" hidden>
+        <div class="grid">
+          <div class="card">
+            <h2>Onboarding questionnaire</h2>
+            <p class="muted" style="margin-top:0; line-height:1.5">
+              Capture interests, experience, work preferences, and a quick skills self-assessment. Progress is saved locally in this prototype.
+            </p>
+
+            <div class="steps" aria-label="Onboarding steps">
+              <span class="step active" id="qStep1">Interests</span>
+              <span class="step" id="qStep2">Experience</span>
+              <span class="step" id="qStep3">Preferences</span>
+              <span class="step" id="qStep4">Skills</span>
+              <span class="step" id="qStep5">Review</span>
+            </div>
+
+            <div style="margin-top:12px" class="progress" aria-label="Questionnaire completion">
+              <div id="qProgress" style="width:0%"></div>
+            </div>
+            <div class="footer-note" id="qProgressText">0% complete</div>
+          </div>
+
+          <div class="card" id="qPanel">
+            <!-- Filled by JS -->
+          </div>
+        </div>
+      </section>
+
+      <section class="route" id="route-recommendations" data-title="Career Recommendations" hidden>
+        <div class="grid">
+          <div class="card">
+            <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; align-items:flex-start;">
+              <div>
+                <h2 style="margin-bottom:6px;">Your recommendations</h2>
+                <p class="muted" style="margin:0; line-height:1.5">
+                  Based on your profile, here are careers with match scores and explanations (simulated).
+                </p>
+              </div>
+              <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+                <select id="sortSelect" aria-label="Sort recommendations">
+                  <option value="score_desc">Sort: Match score (high→low)</option>
+                  <option value="salary_desc">Sort: Salary (high→low)</option>
+                  <option value="alpha">Sort: Title (A→Z)</option>
+                </select>
+                <button class="btn" type="button" id="openFiltersBtn">Filters</button>
+                <button class="btn primary" type="button" id="regenRecsBtn">Regenerate</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="card">
+              <h3>Filters (quick)</h3>
+              <div class="two">
+                <div class="field">
+                  <label for="filterMinScore">Min match score</label>
+                  <select id="filterMinScore">
+                    <option value="0">Any</option>
+                    <option value="60">60%+</option>
+                    <option value="70">70%+</option>
+                    <option value="80">80%+</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="filterEdu">Education required</label>
+                  <select id="filterEdu">
+                    <option value="any">Any</option>
+                    <option value="bachelor">Bachelor+</option>
+                    <option value="bootcamp">Bootcamp-friendly</option>
+                  </select>
+                </div>
+              </div>
+              <div class="field">
+                <label for="filterIndustry">Industry</label>
+                <select id="filterIndustry">
+                  <option value="any">Any</option>
+                  <option value="tech">Tech</option>
+                  <option value="data">Data</option>
+                  <option value="design">Design</option>
+                  <option value="business">Business</option>
+                </select>
+              </div>
+              <div style="display:flex; gap:10px; flex-wrap:wrap">
+                <button class="btn primary" type="button" id="applyRecFiltersBtn">Apply</button>
+                <button class="btn" type="button" id="clearRecFiltersBtn">Clear</button>
+              </div>
+              <div class="footer-note" id="recResultsText">0 results</div>
+            </div>
+
+            <div class="card">
+              <h3>Why these careers?</h3>
+              <p class="muted" style="margin:0; line-height:1.5">
+                Each recommendation includes: match score, factor breakdown, aligned skills, and gaps to learn.
+              </p>
+              <div class="notice" style="margin-top:10px;">
+                Open a career to see salary bands, responsibilities, outlook, skills, and a CTA to generate a roadmap.
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 style="margin-bottom:10px;">Recommendation list</h3>
+            <div id="recList" class="grid" style="gap:10px;"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="route" id="route-career" data-title="Career Details" hidden>
+        <div class="grid">
+          <div class="card">
+            <div style="display:flex;justify-content:space-between; gap:12px; flex-wrap:wrap; align-items:flex-start;">
+              <div>
+                <h2 id="careerTitle" style="margin-bottom:6px;">Career details</h2>
+                <div class="muted" id="careerMeta">Select a career from Recommendations.</div>
+              </div>
+              <div style="display:flex;gap:10px;flex-wrap:wrap; align-items:center;">
+                <button class="btn" type="button" id="toggleSaveCareerBtn">★ Save</button>
+                <button class="btn primary" type="button" id="generateRoadmapBtn">Generate roadmap</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="split">
+            <div class="card">
+              <h3>Overview</h3>
+              <p id="careerDesc" class="muted" style="margin:0; line-height:1.55">—</p>
+              <div style="margin-top:12px">
+                <h3>Responsibilities</h3>
+                <ul id="careerResp" style="margin:0; padding-left:18px; color:var(--muted); line-height:1.6"></ul>
+              </div>
+              <div style="margin-top:12px">
+                <h3>Related careers</h3>
+                <div id="relatedCareers" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
+              </div>
+            </div>
+
+            <div class="grid" style="gap:14px;">
+              <div class="card">
+                <h3>Compensation & outlook</h3>
+                <div class="kpi">
+                  <div>
+                    <div class="num" id="careerSalary">$—</div>
+                    <div class="lbl">Typical salary range</div>
+                  </div>
+                  <div>
+                    <div class="num" id="careerOutlook">—</div>
+                    <div class="lbl">Growth outlook</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card">
+                <h3>Skills</h3>
+                <div id="careerSkills" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
+                <div class="footer-note">Green = aligned skills; Orange = skills to learn.</div>
+              </div>
+
+              <div class="card">
+                <h3>Notes</h3>
+                <textarea id="careerNotes" placeholder="Add notes for this career (saved in prototype state)"></textarea>
+                <div style="display:flex; gap:10px; margin-top:10px;">
+                  <button class="btn primary" type="button" id="saveCareerNotesBtn">Save notes</button>
+                  <button class="btn" type="button" id="goToSavedBtn">View saved careers</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Recommendation explanation</h3>
+            <div id="careerExplanation" class="notice">Open a career from recommendations to see the explanation.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="route" id="route-roadmap" data-title="Learning Roadmap" hidden>
+        <div class="grid">
+          <div class="card">
+            <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; align-items:flex-start;">
+              <div>
+                <h2 style="margin-bottom:6px;">Learning roadmap</h2>
+                <div class="muted" id="roadmapSubtitle">Generate a roadmap from a career page.</div>
+              </div>
+              <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+                <button class="btn" type="button" id="addMilestoneBtn">+ Add milestone</button>
+                <button class="btn" type="button" id="exportRoadmapBtn">Export (PDF)</button>
+                <button class="btn danger" type="button" id="resetRoadmapBtn">Revert to generated</button>
+              </div>
+            </div>
+
+            <div style="margin-top:10px" class="progress" aria-label="Roadmap progress">
+              <div id="roadmapProgressBar" style="width:0%"></div>
+            </div>
+            <div class="footer-note" id="roadmapProgressText">0% complete</div>
+          </div>
+
+          <div class="card">
+            <h3>Milestones</h3>
+            <div id="milestoneList" class="grid" style="gap:10px;"></div>
+          </div>
+
+          <div class="row">
+            <div class="card">
+              <h3>Learning resources</h3>
+              <p class="muted" style="margin-top:0; line-height:1.5">
+                Each activity can include curated resources (course/book/project). In this prototype, resources are pre-filled.
+              </p>
+              <div id="resourceList" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
+            </div>
+            <div class="card">
+              <h3>Progress insights</h3>
+              <div class="kpi">
+                <div>
+                  <div class="num" id="roadmapKpiDone">0</div>
+                  <div class="lbl">Activities completed</div>
+                </div>
+                <div>
+                  <div class="num" id="roadmapKpiTotal">0</div>
+                  <div class="lbl">Total activities</div>
+                </div>
+              </div>
+              <div class="footer-note">Progress drives the User Analytics dashboard.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="route" id="route-checklists" data-title="Resume & Portfolio" hidden>
+        <div class="grid">
+          <div class="card">
+            <h2>Resume & portfolio checklists</h2>
+            <p class="muted" style="margin-top:0; line-height:1.5">
+              Use career-specific checklists to prepare your application materials. Completion contributes to analytics.
+            </p>
+          </div>
+
+          <div class="row">
+            <div class="card">
+              <div style="display:flex;justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:flex-start;">
+                <div>
+                  <h3 style="margin-bottom:6px;">Resume checklist</h3>
+                  <div class="muted">Mark items complete as you build your resume.</div>
+                </div>
+                <button class="btn small" type="button" id="resumeResetBtn">Reset</button>
+              </div>
+              <div id="resumeChecklist" class="grid" style="gap:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="card">
+              <div style="display:flex;justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:flex-start;">
+                <div>
+                  <h3 style="margin-bottom:6px;">Portfolio checklist</h3>
+                  <div class="muted">Shown for portfolio-relevant careers (simulated toggle).</div>
+                </div>
+                <div style="display:flex; gap:8px; align-items:center;">
+                  <label class="tiny" for="portfolioToggle">Show portfolio list</label>
+                  <input id="portfolioToggle" type="checkbox" />
+                </div>
+              </div>
+              <div id="portfolioChecklist" class="grid" style="gap:8px; margin-top:10px;"></div>
+              <div class="footer-note">Templates download is simulated.</div>
+              <button class="btn" type="button" id="downloadTemplatesBtn">Download templates</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="route" id="route-jobtracker" data-title="Job Tracker" hidden>
+        <div class="grid">
+          <div class="card">
+            <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; align-items:flex-start;">
+              <div>
+                <h2 style="margin-bottom:6px;">Job application tracker</h2>
+                <div class="muted">Track applications in list and kanban views.</div>
+              </div>
+              <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+                <button class="btn primary" type="button" id="addJobBtn">+ Add application</button>
+                <button class="btn" type="button" id="toggleJobViewBtn">Switch to Kanban</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" id="jobListView">
+            <h3>Applications (list)</h3>
+            <table class="table" aria-label="Job applications table">
+              <thead>
+                <tr>
+                  <th>Company</th>
+                  <th>Role</th>
+                  <th>Status</th>
+                  <th>Date</th>
+                  <th>Next step</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="jobTableBody"></tbody>
+            </table>
+            <div class="footer-note" id="jobStatsText">0 applications</div>
+          </div>
+
+          <div class="card" id="jobKanbanView" hidden>
+            <h3>Applications (kanban)</h3>
+            <div class="kanban" id="kanbanBoard"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="route" id="route-saved" data-title="Saved Careers" hidden>
+        <div class="grid">
+          <div class="card">
+            <h2>Saved careers</h2>
+            <p class="muted" style="margin-top:0; line-height:1.5">Favorites persist in prototype state. Add notes and quickly open career details.</p>
+          </div>
+
+          <div class="card">
+            <div id="savedList" class="grid" style="gap:10px;"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="route" id="route-profile" data-title="Account / Profile" hidden>
+        <div class="grid">
+          <div class="card">
+            <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; align-items:flex-start;">
+              <div>
+                <h2 style="margin-bottom:6px;">Account & profile</h2>
+                <div class="muted">Update personal details, retake questionnaire, and manage settings.</div>
+              </div>
+              <button class="btn danger" type="button" id="logoutBtn">Logout</button>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="card">
+              <h3>Profile details</h3>
+              <form class="form" id="profileForm">
+                <div class="two">
+                  <div class="field">
+                    <label for="pfFirst">First name</label>
+                    <input id="pfFirst" type="text" required />
+                  </div>
+                  <div class="field">
+                    <label for="pfLast">Last name</label>
+                    <input id="pfLast" type="text" required />
+                  </div>
+                </div>
+                <div class="field">
+                  <label for="pfEmail">Email</label>
+                  <input id="pfEmail" type="email" required />
+                </div>
+                <div class="field">
+                  <label for="pfBio">Bio</label>
+                  <textarea id="pfBio" placeholder="Tell us a bit about your goals..."></textarea>
+                </div>
+                <button class="btn primary" type="submit">Save profile</button>
+              </form>
+            </div>
+
+            <div class="card">
+              <h3>Settings</h3>
+              <div class="field">
+                <label>Role</label>
+                <div class="chip" id="pfRoleChip">Guest</div>
+              </div>
+              <div class="field">
+                <label>Actions</label>
+                <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                  <button class="btn" type="button" id="retakeOnboardingBtn">Retake onboarding</button>
+                  <button class="btn" type="button" id="goToAnalyticsBtn">View my analytics</button>
+                </div>
+              </div>
+              <div class="notice">
+                Admin access in this prototype is a toggle (no real auth). Use Admin CMS to switch roles.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="route" id="route-admin" data-title="Admin CMS" hidden>
+        <div class="grid">
+          <div class="card">
+            <div style="display:flex;justify-content:space-between; gap:12px; flex-wrap:wrap; align-items:flex-start;">
+              <div>
+                <h2 style="margin-bottom:6px;">Admin CMS</h2>
+                <div class="muted">Create/update careers, skills, and learning resources (simulated CRUD).</div>
+              </div>
+              <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+                <button class="btn" type="button" id="toggleAdminBtn">Enable admin mode</button>
+                <button class="btn primary" type="button" id="adminNewCareerBtn">+ New career</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="card">
+              <h3>Careers</h3>
+              <table class="table" aria-label="Admin careers table">
+                <thead>
+                  <tr>
+                    <th>Title</th>
+                    <th>Status</th>
+                    <th>Industry</th>
+                    <th>Updated</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="adminCareersBody"></tbody>
+              </table>
+              <div class="footer-note">Changes appear in recommendations/career pages immediately (prototype state).</div>
+            </div>
+
+            <div class="card">
+              <h3>Skills & resources</h3>
+              <div class="field">
+                <label>Skills taxonomy (sample)</label>
+                <div id="adminSkillsWrap" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
+              </div>
+              <div class="field">
+                <label>Learning resources (sample)</label>
+                <div id="adminResourcesWrap" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
+              </div>
+              <div style="display:flex; gap:10px; flex-wrap:wrap">
+                <button class="btn" type="button" id="adminAddSkillBtn">+ Add skill</button>
+                <button class="btn" type="button" id="adminAddResourceBtn">+ Add resource</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="route" id="route-analytics" data-title="Analytics" hidden>
+        <div class="grid">
+          <div class="card">
+            <h2>Analytics</h2>
+            <p class="muted" style="margin-top:0; line-height:1.5">
+              This prototype includes user progress analytics and admin system analytics (simulated).
+            </p>
+          </div>
+
+          <div class="row">
+            <div class="card">
+              <h3>User progress</h3>
+              <div class="kpi">
+                <div>
+                  <div class="num" id="anOnboard">0%</div>
+                  <div class="lbl">Onboarding</div>
+                </div>
+                <div>
+                  <div class="num" id="anRoadmap">0%</div>
+                  <div class="lbl">Roadmap completion</div>
+                </div>
+              </div>
+              <div style="margin-top:12px" class="two">
+                <div class="notice">
+                  <b>Explored careers:</b> <span id="anExplored">0</span><br/>
+                  <b>Saved careers:</b> <span id="anSaved">0</span><br/>
+                  <b>Job applications:</b> <span id="anJobs">0</span>
+                </div>
+                <div class="notice">
+                  <b>Resume readiness:</b> <span id="anResume">0%</span><br/>
+                  <b>Portfolio readiness:</b> <span id="anPortfolio">0%</span><br/>
+                  <b>Feedback submitted:</b> <span id="anFeedback">0</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <h3>Admin system metrics</h3>
+              <div class="kpi">
+                <div>
+                  <div class="num" id="sysUsers">1</div>
+                  <div class="lbl">Total users</div>
+                </div>
+                <div>
+                  <div class="num" id="sysCareers">0</div>
+                  <div class="lbl">Careers (published)</div>
+                </div>
+              </div>
+              <div style="margin-top:12px" class="notice">
+                <b>Most saved career:</b> <span id="sysTopCareer">—</span><br/>
+                <b>Questionnaire completion rate:</b> <span id="sysQRate">0%</span><br/>
+                <b>Avg recommendations per user:</b> <span id="sysAvgRecs">0</span>
+              </div>
+              <div class="footer-note">In a real system, these come from backend analytics endpoints.</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Feedback</h3>
+            <p class="muted" style="margin-top:0; line-height:1.5">
+              Provide feedback on recommendations to close the loop (REQ-026). This is stored locally for the prototype.
+            </p>
+            <form class="form" id="feedbackForm">
+              <div class="two">
+                <div class="field">
+                  <label for="fbCareer">Career</label>
+                  <select id="fbCareer"></select>
+                </div>
+                <div class="field">
+                  <label for="fbHelpful">Was this helpful?</label>
+                  <select id="fbHelpful">
+                    <option value="yes">Helpful</option>
+                    <option value="no">Not helpful</option>
+                  </select>
+                </div>
+              </div>
+              <div class="field">
+                <label for="fbComment">Comment</label>
+                <textarea id="fbComment" placeholder="What should we improve?"></textarea>
+              </div>
+              <button class="btn primary" type="submit">Submit feedback</button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <section class="route" id="route-about" data-title="Prototype Notes" hidden>
+        <div class="grid">
+          <div class="card">
+            <h2>Prototype notes</h2>
+            <p class="muted" style="margin-top:0; line-height:1.6">
+              This single HTML file is designed to demonstrate the complete Career Navigator UX end-to-end:
+              onboarding, recommendations with explanations, career details, roadmaps and progress, checklists,
+              job tracker, saved careers, account/profile, admin CMS, and analytics.
+            </p>
+            <div class="notice">
+              <b>How to use:</b>
+              <ol style="margin:8px 0 0; padding-left:18px; line-height:1.6">
+                <li>Start at <b>Sign up / Login</b> and log in.</li>
+                <li>Complete <b>Onboarding</b> and submit.</li>
+                <li>Review <b>Recommendations</b>, open a career, and generate a <b>Roadmap</b>.</li>
+                <li>Update <b>Checklists</b> and add items in <b>Job Tracker</b>.</li>
+                <li>Explore <b>Admin CMS</b> and <b>Analytics</b> to see system-wide dashboards.</li>
+              </ol>
+            </div>
+            <div class="footer-note">
+              File location: <span style="font-family:var(--mono)">career_navigator_frontend/public/ux-prototype.html</span>
+              — open directly in a browser, or serve via the dev server and visit <span style="font-family:var(--mono)">/ux-prototype.html</span>.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Shared modal -->
+      <div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true" aria-hidden="true">
+        <div class="modal">
+          <div class="modal-header">
+            <div>
+              <h2 id="modalTitle">Modal</h2>
+              <p id="modalSub">—</p>
+            </div>
+            <div class="modal-actions">
+              <button class="btn" type="button" id="modalCloseBtn">Close</button>
+            </div>
+          </div>
+          <div id="modalBody"></div>
+        </div>
+      </div>
+
+      <div class="toast" id="toast" role="status" aria-live="polite">
+        <p class="title" id="toastTitle">Saved</p>
+        <p class="msg" id="toastMsg">Action completed.</p>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Career Navigator UX Prototype
+    // - Single file, in-memory + localStorage state
+    // - Navigation via hash routes
+    // - Simulated AI recommendations and admin CMS CRUD
+
+    const STORAGE_KEY = "career-navigator-ux-prototype-v1";
+
+    const seed = () => ({
+      session: {
+        isAuthed: false,
+        isAdmin: false,
+        userId: "u1",
+      },
+      user: {
+        firstName: "Sarah",
+        lastName: "Nguyen",
+        email: "sarah@example.com",
+        bio: "",
+        createdAt: Date.now(),
+      },
+      onboarding: {
+        step: 1,
+        interests: ["Problem solving", "Helping people"],
+        experienceLevel: "Entry",
+        education: "Bachelor",
+        workStyle: ["Hybrid"],
+        goals: "Switch into a role with growth and meaningful projects.",
+        skills: {
+          "Communication": "Intermediate",
+          "Excel": "Intermediate",
+          "Python": "Beginner",
+          "Statistics": "Beginner",
+          "UI Design": "Beginner",
+        },
+        completed: false
+      },
+      careers: [
+        {
+          id: "c_data_analyst",
+          title: "Data Analyst",
+          industry: "data",
+          status: "published",
+          updatedAt: Date.now() - 1000 * 60 * 60 * 36,
+          summary: "Turn raw data into insights for business decisions.",
+          responsibilities: [
+            "Query and clean datasets",
+            "Build dashboards and reports",
+            "Communicate findings to stakeholders",
+            "Define KPIs and metrics"
+          ],
+          salary: { entry: "$60k–$85k", mid: "$85k–$110k", senior: "$110k–$140k" },
+          outlook: "Strong",
+          educationRequired: "bachelor",
+          requiredSkills: ["SQL", "Data Visualization", "Statistics", "Communication"],
+          related: ["c_product_analyst", "c_bi_analyst"],
+          resources: [
+            { id:"r_sql", title:"SQL for Analytics", type:"course", provider:"Coursera", duration:"12h", cost:"free", url:"#"},
+            { id:"r_viz", title:"Data Viz with Tableau", type:"course", provider:"Tableau", duration:"10h", cost:"free", url:"#"},
+            { id:"r_stats", title:"Practical Statistics", type:"book", provider:"O'Reilly", duration:"14h", cost:"paid", url:"#"},
+          ]
+        },
+        {
+          id: "c_frontend_dev",
+          title: "Frontend Developer",
+          industry: "tech",
+          status: "published",
+          updatedAt: Date.now() - 1000 * 60 * 60 * 12,
+          summary: "Build user interfaces for web applications.",
+          responsibilities: [
+            "Implement UI components",
+            "Collaborate with design and backend teams",
+            "Optimize performance and accessibility",
+            "Write tests and documentation"
+          ],
+          salary: { entry: "$70k–$95k", mid: "$95k–$130k", senior: "$130k–$170k" },
+          outlook: "Strong",
+          educationRequired: "bootcamp",
+          requiredSkills: ["HTML/CSS", "JavaScript", "React", "Accessibility"],
+          related: ["c_ui_designer", "c_fullstack_dev"],
+          resources: [
+            { id:"r_js", title:"Modern JavaScript", type:"course", provider:"MDN", duration:"15h", cost:"free", url:"#"},
+            { id:"r_react", title:"React Fundamentals", type:"course", provider:"React Docs", duration:"8h", cost:"free", url:"#"},
+            { id:"r_a11y", title:"Web Accessibility", type:"course", provider:"WebAIM", duration:"6h", cost:"free", url:"#"},
+          ]
+        },
+        {
+          id: "c_product_analyst",
+          title: "Product Analyst",
+          industry: "business",
+          status: "published",
+          updatedAt: Date.now() - 1000 * 60 * 60 * 62,
+          summary: "Analyze user behavior and product metrics to guide roadmap decisions.",
+          responsibilities: [
+            "Instrument and analyze product funnels",
+            "Run experiments and A/B tests",
+            "Partner with PMs and engineering",
+            "Define product KPIs"
+          ],
+          salary: { entry: "$75k–$95k", mid: "$95k–$125k", senior: "$125k–$160k" },
+          outlook: "Moderate",
+          educationRequired: "bachelor",
+          requiredSkills: ["SQL", "Experimentation", "Analytics", "Communication"],
+          related: ["c_data_analyst", "c_growth_marketer"],
+          resources: [
+            { id:"r_exp", title:"Experimentation Basics", type:"course", provider:"Udacity", duration:"7h", cost:"free", url:"#"},
+            { id:"r_sql2", title:"Intermediate SQL", type:"course", provider:"Mode", duration:"8h", cost:"free", url:"#"},
+            { id:"r_metrics", title:"Metrics that Matter", type:"book", provider:"Leanpub", duration:"10h", cost:"paid", url:"#"},
+          ]
+        },
+        {
+          id: "c_ui_designer",
+          title: "UI/UX Designer",
+          industry: "design",
+          status: "published",
+          updatedAt: Date.now() - 1000 * 60 * 60 * 90,
+          summary: "Design intuitive interfaces and user experiences.",
+          responsibilities: [
+            "Create wireframes and prototypes",
+            "Conduct usability research",
+            "Design UI systems and components",
+            "Collaborate with engineers"
+          ],
+          salary: { entry: "$65k–$90k", mid: "$90k–$130k", senior: "$130k–$175k" },
+          outlook: "Strong",
+          educationRequired: "bootcamp",
+          requiredSkills: ["Interaction Design", "Visual Design", "Prototyping", "Communication"],
+          related: ["c_frontend_dev", "c_product_designer"],
+          resources: [
+            { id:"r_figma", title:"Figma Essentials", type:"course", provider:"Figma", duration:"5h", cost:"free", url:"#"},
+            { id:"r_ui", title:"UI Design Systems", type:"course", provider:"NN/g", duration:"6h", cost:"paid", url:"#"},
+            { id:"r_port", title:"Portfolio Projects", type:"project", provider:"Self-guided", duration:"20h", cost:"free", url:"#"},
+          ]
+        }
+      ],
+      recs: [],
+      selectedCareerId: null,
+      exploredCareerIds: [],
+      savedCareers: {}, // {careerId: {notes, savedAt}}
+      roadmaps: {}, // {careerId: {generated, milestones[]}}
+      jobApps: [
+        { id:"j1", company:"Acme", role:"Data Analyst", status:"Applied", date:"2026-03-01", next:"Follow up in 3 days", url:"#", contact:"recruiter@acme.com", notes:"Tailor resume to SQL + dashboards."},
+        { id:"j2", company:"BlueWave", role:"Product Analyst", status:"Interview Scheduled", date:"2026-03-05", next:"Prepare case study", url:"#", contact:"hr@bluewave.com", notes:"Review experimentation and metrics."}
+      ],
+      checklists: {
+        resume: {
+          items: [
+            { id:"r1", label:"Contact information + links", done:false, tip:"Use a professional email + LinkedIn."},
+            { id:"r2", label:"Professional summary tailored to target role", done:false, tip:"2–3 lines focused on impact."},
+            { id:"r3", label:"Work experience with metrics", done:false, tip:"Use numbers: %, $, time saved."},
+            { id:"r4", label:"Projects section (portfolio-ready)", done:false, tip:"Show problem, approach, results."},
+            { id:"r5", label:"Skills section aligned to career", done:false, tip:"Prioritize job-relevant skills first."},
+            { id:"r6", label:"Education + certifications", done:false, tip:"Include relevant coursework/certs."}
+          ]
+        },
+        portfolio: {
+          items: [
+            { id:"p1", label:"Choose a portfolio platform (GitHub/Notion/Website)", done:false },
+            { id:"p2", label:"Show 2–4 strong projects", done:false },
+            { id:"p3", label:"Write case studies with clear outcomes", done:false },
+            { id:"p4", label:"Add visuals / screenshots", done:false },
+            { id:"p5", label:"Add about page and contact info", done:false }
+          ],
+          enabled: false
+        }
+      },
+      feedback: [] // {careerId, helpful, comment, createdAt}
+    });
+
+    const $ = (id) => document.getElementById(id);
+    const $$ = (sel) => Array.from(document.querySelectorAll(sel));
+
+    function loadState(){
+      try{
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if(!raw) return seed();
+        const parsed = JSON.parse(raw);
+        // Merge with seed to avoid missing keys when prototype evolves
+        return deepMerge(seed(), parsed);
+      }catch(e){
+        return seed();
+      }
+    }
+    function saveState(){
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+    function deepMerge(base, patch){
+      if(Array.isArray(base)) return Array.isArray(patch) ? patch : base;
+      if(base && typeof base === "object"){
+        const out = {...base};
+        for(const k of Object.keys(patch || {})){
+          out[k] = deepMerge(base[k], patch[k]);
+        }
+        return out;
+      }
+      return (patch === undefined) ? base : patch;
+    }
+
+    let state = loadState();
+
+    function toast(title, msg){
+      $("toastTitle").textContent = title;
+      $("toastMsg").textContent = msg;
+      const el = $("toast");
+      el.classList.add("show");
+      window.clearTimeout(toast._t);
+      toast._t = window.setTimeout(()=> el.classList.remove("show"), 2400);
+    }
+
+    function setRolePill(){
+      const role = state.session.isAdmin ? "Admin" : (state.session.isAuthed ? "User" : "Guest");
+      $("rolePill").textContent = role;
+      $("pfRoleChip").textContent = role;
+    }
+
+    function goto(hash){
+      if(!hash.startsWith("#")) hash = "#" + hash;
+      window.location.hash = hash;
+    }
+
+    function setPrimaryCTA(){
+      const btn = $("primaryCtaBtn");
+      if(!state.session.isAuthed){
+        btn.textContent = "Get started";
+        btn.onclick = () => goto("#auth");
+        return;
+      }
+      if(!state.onboarding.completed){
+        btn.textContent = "Continue onboarding";
+        btn.onclick = () => goto("#onboarding");
+        return;
+      }
+      btn.textContent = "View recommendations";
+      btn.onclick = () => goto("#recommendations");
+    }
+
+    function routeFromHash(){
+      return (window.location.hash || "#welcome").replace("#", "");
+    }
+
+    function showRoute(route){
+      $$(".route").forEach(s => s.hidden = true);
+      const section = $("route-" + route);
+      if(section) section.hidden = false;
+
+      // Side nav active state
+      $$("#sideNav a").forEach(a => a.classList.toggle("active", a.dataset.route === route));
+
+      // Crumb
+      const title = section ? section.getAttribute("data-title") : "Welcome";
+      $("crumbTitle").textContent = title;
+
+      // Guard rails (prototype)
+      const protectedRoutes = ["onboarding","recommendations","career","roadmap","checklists","jobtracker","saved","profile","analytics"];
+      if(protectedRoutes.includes(route) && !state.session.isAuthed){
+        toast("Login required", "Please sign up or log in to access that section (prototype).");
+        goto("#auth");
+        return;
+      }
+      if(["admin"].includes(route) && !state.session.isAuthed){
+        toast("Login required", "Please log in to access Admin CMS (prototype).");
+        goto("#auth");
+        return;
+      }
+    }
+
+    // --- Onboarding rendering ---
+    function onboardingCompletionPct(){
+      const o = state.onboarding;
+      let pts = 0, total = 5;
+      if(o.interests && o.interests.length) pts++;
+      if(o.experienceLevel) pts++;
+      if(o.workStyle && o.workStyle.length) pts++;
+      if(o.goals && o.goals.trim().length > 4) pts++;
+      if(o.skills && Object.keys(o.skills).length) pts++;
+      return Math.round((pts/total)*100);
+    }
+
+    function setGlobalKPIs(){
+      const pct = onboardingCompletionPct();
+      $("kpiOnboardPct").textContent = pct + "%";
+      $("kpiOnboardBar").style.width = pct + "%";
+      $("kpiSummary").textContent = state.onboarding.completed ? "Onboarding complete. Recommendations ready." : "Complete onboarding to unlock recommendations.";
+      $("stepAuth").classList.toggle("active", state.session.isAuthed);
+      $("stepOnboarding").classList.toggle("active", state.onboarding.completed);
+      $("stepRecs").classList.toggle("active", state.recs.length > 0);
+      $("stepCareer").classList.toggle("active", !!state.selectedCareerId);
+      $("stepRoadmap").classList.toggle("active", !!getActiveRoadmap());
+      $("stepTools").classList.toggle("active", state.jobApps.length > 0 || state.feedback.length > 0);
+
+      $("savedCountBadge").textContent = Object.keys(state.savedCareers).length;
+      $("recCountBadge").textContent = state.recs.length;
+    }
+
+    function onboardingPanel(){
+      const step = state.onboarding.step || 1;
+      const pct = onboardingCompletionPct();
+      $("qProgress").style.width = pct + "%";
+      $("qProgressText").textContent = pct + "% complete";
+
+      ["qStep1","qStep2","qStep3","qStep4","qStep5"].forEach((id, idx)=>{
+        $(id).classList.toggle("active", idx+1 === step);
+      });
+
+      const wrap = $("qPanel");
+      wrap.innerHTML = "";
+
+      const navRow = document.createElement("div");
+      navRow.style.display = "flex";
+      navRow.style.gap = "10px";
+      navRow.style.flexWrap = "wrap";
+      navRow.style.marginTop = "12px";
+
+      const prevBtn = document.createElement("button");
+      prevBtn.className = "btn";
+      prevBtn.type = "button";
+      prevBtn.textContent = "← Back";
+      prevBtn.disabled = step === 1;
+      prevBtn.onclick = () => { state.onboarding.step = Math.max(1, step-1); saveState(); onboardingPanel(); };
+      const nextBtn = document.createElement("button");
+      nextBtn.className = "btn primary";
+      nextBtn.type = "button";
+      nextBtn.textContent = step === 5 ? "Submit" : "Next →";
+      nextBtn.onclick = () => {
+        if(step < 5){
+          state.onboarding.step = step+1;
+          saveState();
+          onboardingPanel();
+        }else{
+          state.onboarding.completed = true;
+          saveState();
+          toast("Onboarding submitted", "Recommendations are ready.");
+          generateRecommendations();
+          goto("#recommendations");
+        }
+      };
+
+      const saveBtn = document.createElement("button");
+      saveBtn.className = "btn";
+      saveBtn.type = "button";
+      saveBtn.textContent = "Save progress";
+      saveBtn.onclick = () => { saveState(); toast("Saved", "Onboarding progress saved."); };
+
+      if(step === 1){
+        wrap.appendChild(panelTitle("Interests"));
+        wrap.appendChild(panelHint("Select interests that energize you."));
+        const opts = ["Problem solving","Helping people","Creativity","Data & patterns","Building products","Teaching","Designing","Business strategy"];
+        wrap.appendChild(chipMultiSelect("interests", opts, state.onboarding.interests, (v)=>{ state.onboarding.interests = v; saveState(); onboardingPanel(); }));
+      }
+      if(step === 2){
+        wrap.appendChild(panelTitle("Experience"));
+        const sel = document.createElement("select");
+        sel.innerHTML = `
+          <option value="Entry">Entry</option>
+          <option value="Mid">Mid</option>
+          <option value="Senior">Senior</option>
+        `;
+        sel.value = state.onboarding.experienceLevel || "Entry";
+        sel.onchange = () => { state.onboarding.experienceLevel = sel.value; saveState(); };
+        wrap.appendChild(fieldWrap("Experience level", sel));
+
+        const edu = document.createElement("select");
+        edu.innerHTML = `
+          <option value="High school">High school</option>
+          <option value="Associate">Associate</option>
+          <option value="Bachelor">Bachelor</option>
+          <option value="Master">Master</option>
+          <option value="Bootcamp">Bootcamp</option>
+        `;
+        edu.value = state.onboarding.education || "Bachelor";
+        edu.onchange = () => { state.onboarding.education = edu.value; saveState(); };
+        wrap.appendChild(fieldWrap("Education", edu));
+      }
+      if(step === 3){
+        wrap.appendChild(panelTitle("Work preferences"));
+        wrap.appendChild(panelHint("Choose your preferred work environment."));
+        const opts = ["Remote","Hybrid","On-site","Team-based","Independent","Fast-paced","Structured"];
+        wrap.appendChild(chipMultiSelect("workStyle", opts, state.onboarding.workStyle, (v)=>{ state.onboarding.workStyle = v; saveState(); }));
+        const goals = document.createElement("textarea");
+        goals.value = state.onboarding.goals || "";
+        goals.placeholder = "Describe what you want from your next career...";
+        goals.oninput = () => { state.onboarding.goals = goals.value; saveState(); };
+        wrap.appendChild(fieldWrap("Career goals", goals));
+      }
+      if(step === 4){
+        wrap.appendChild(panelTitle("Skills assessment"));
+        wrap.appendChild(panelHint("Rate your current proficiency. Add a custom skill if needed."));
+        const skills = state.onboarding.skills || {};
+        const list = document.createElement("div");
+        list.className = "grid";
+        list.style.gap = "8px";
+
+        Object.keys(skills).forEach((name)=>{
+          const row = document.createElement("div");
+          row.className = "card";
+          row.style.boxShadow = "none";
+          row.style.background = "rgba(255,255,255,.7)";
+          row.style.padding = "10px";
+          row.style.borderRadius = "12px";
+          row.style.display = "flex";
+          row.style.alignItems = "center";
+          row.style.gap = "10px";
+          row.style.justifyContent = "space-between";
+
+          const left = document.createElement("div");
+          left.innerHTML = `<b>${escapeHtml(name)}</b><div class="tiny">Self-assessed</div>`;
+          const sel = document.createElement("select");
+          sel.innerHTML = `
+            <option>Beginner</option>
+            <option>Intermediate</option>
+            <option>Advanced</option>
+            <option>Expert</option>
+          `;
+          sel.value = skills[name];
+          sel.onchange = () => { state.onboarding.skills[name] = sel.value; saveState(); };
+
+          const del = document.createElement("button");
+          del.className = "btn small";
+          del.type = "button";
+          del.textContent = "Remove";
+          del.onclick = () => { delete state.onboarding.skills[name]; saveState(); onboardingPanel(); };
+
+          const right = document.createElement("div");
+          right.style.display="flex";
+          right.style.gap="8px";
+          right.appendChild(sel);
+          right.appendChild(del);
+
+          row.appendChild(left);
+          row.appendChild(right);
+          list.appendChild(row);
+        });
+
+        const addWrap = document.createElement("div");
+        addWrap.className = "two";
+        const skillName = document.createElement("input");
+        skillName.type = "text";
+        skillName.placeholder = "Add custom skill (e.g., SQL)";
+        const level = document.createElement("select");
+        level.innerHTML = `<option>Beginner</option><option>Intermediate</option><option>Advanced</option><option>Expert</option>`;
+        const addBtn = document.createElement("button");
+        addBtn.className = "btn primary";
+        addBtn.type = "button";
+        addBtn.textContent = "Add";
+        addBtn.onclick = () => {
+          const n = skillName.value.trim();
+          if(!n) return toast("Missing skill", "Enter a skill name.");
+          state.onboarding.skills[n] = level.value;
+          skillName.value = "";
+          saveState();
+          onboardingPanel();
+        };
+        addWrap.appendChild(skillName);
+        addWrap.appendChild(level);
+
+        wrap.appendChild(list);
+        wrap.appendChild(addWrap);
+        wrap.appendChild(addBtn);
+      }
+      if(step === 5){
+        wrap.appendChild(panelTitle("Review & submit"));
+        const o = state.onboarding;
+        const pre = document.createElement("pre");
+        pre.style.fontFamily = "var(--mono)";
+        pre.style.fontSize = "12px";
+        pre.style.background = "rgba(249,250,251,.95)";
+        pre.style.border = "1px solid var(--border)";
+        pre.style.borderRadius = "12px";
+        pre.style.padding = "12px";
+        pre.style.whiteSpace = "pre-wrap";
+        pre.textContent = JSON.stringify({
+          interests: o.interests,
+          experienceLevel: o.experienceLevel,
+          education: o.education,
+          workStyle: o.workStyle,
+          goals: o.goals,
+          skills: o.skills
+        }, null, 2);
+        wrap.appendChild(pre);
+
+        const req = document.createElement("div");
+        req.className = "notice";
+        req.innerHTML = "<b>Validation:</b> Required fields must be answered before submission (simulated).";
+        wrap.appendChild(req);
+      }
+
+      navRow.appendChild(prevBtn);
+      navRow.appendChild(saveBtn);
+      navRow.appendChild(nextBtn);
+      wrap.appendChild(navRow);
+    }
+
+    function panelTitle(t){
+      const h = document.createElement("h2");
+      h.textContent = t;
+      return h;
+    }
+    function panelHint(t){
+      const p = document.createElement("p");
+      p.className = "muted";
+      p.style.marginTop = "0";
+      p.style.lineHeight = "1.5";
+      p.textContent = t;
+      return p;
+    }
+    function fieldWrap(labelText, inputEl){
+      const wrap = document.createElement("div");
+      wrap.className = "field";
+      const lab = document.createElement("label");
+      lab.textContent = labelText;
+      wrap.appendChild(lab);
+      wrap.appendChild(inputEl);
+      return wrap;
+    }
+    function chipMultiSelect(key, options, selected, onChange){
+      const wrap = document.createElement("div");
+      wrap.style.display = "flex";
+      wrap.style.gap = "8px";
+      wrap.style.flexWrap = "wrap";
+      options.forEach(opt=>{
+        const b = document.createElement("button");
+        b.type="button";
+        b.className="chip";
+        const isOn = (selected || []).includes(opt);
+        if(isOn) b.classList.add("good");
+        b.textContent = opt;
+        b.onclick = () => {
+          const cur = new Set(selected || []);
+          if(cur.has(opt)) cur.delete(opt); else cur.add(opt);
+          onChange(Array.from(cur));
+        };
+        wrap.appendChild(b);
+      });
+      return wrap;
+    }
+
+    // --- Recommendations ---
+    function scoreCareer(c){
+      // Simple heuristic: match interests/skills/education/workstyle
+      const o = state.onboarding;
+      const skills = Object.keys(o.skills || {}).map(s=>s.toLowerCase());
+      const wantsData = (o.interests || []).some(i => /data|patterns|problem/i.test(i.toLowerCase()));
+      const wantsDesign = (o.interests || []).some(i => /creativity|design/i.test(i.toLowerCase()));
+      const wantsBuild = (o.interests || []).some(i => /build|product/i.test(i.toLowerCase()));
+
+      let score = 55;
+
+      if(c.industry === "data" && wantsData) score += 18;
+      if(c.industry === "design" && wantsDesign) score += 18;
+      if(c.industry === "tech" && wantsBuild) score += 10;
+
+      // skill overlap
+      const req = c.requiredSkills.map(s=>s.toLowerCase());
+      const overlap = req.filter(r => skills.some(s => s.includes(r.split(" ")[0].toLowerCase()) || r.includes(s)));
+      score += Math.min(20, overlap.length * 6);
+
+      // education preference
+      if(c.educationRequired === "bootcamp" && (o.education === "Bootcamp" || o.education === "Bachelor" || o.education === "Master")) score += 6;
+      if(c.educationRequired === "bachelor" && (o.education === "Bachelor" || o.education === "Master")) score += 6;
+
+      score = Math.max(30, Math.min(96, score));
+      return {score, overlap};
+    }
+
+    function generateRecommendations(){
+      if(!state.onboarding.completed){
+        state.recs = [];
+        saveState();
+        return;
+      }
+      const recs = state.careers
+        .filter(c => c.status === "published")
+        .map(c=>{
+          const {score, overlap} = scoreCareer(c);
+          const gaps = c.requiredSkills.filter(s => !overlap.map(x=>x.toLowerCase()).includes(s.toLowerCase()));
+          return {
+            careerId: c.id,
+            score,
+            salaryBand: c.salary.mid,
+            breakdown: [
+              { label:"Skills match", value: Math.min(100, Math.round(score * 0.9)) },
+              { label:"Interest alignment", value: Math.min(100, Math.round(score * 0.8)) },
+              { label:"Experience fit", value: Math.min(100, Math.round(score * 0.7)) }
+            ],
+            alignedSkills: overlap.slice(0,3),
+            gaps: gaps.slice(0,3)
+          };
+        });
+
+      // Default sort by score
+      recs.sort((a,b)=> b.score - a.score);
+      state.recs = recs;
+      saveState();
+      renderRecommendations();
+      setGlobalKPIs();
+      updateAnalytics();
+    }
+
+    function renderRecommendations(){
+      const list = $("recList");
+      if(!list) return;
+      list.innerHTML = "";
+      const filters = getRecFilters();
+      let items = state.recs.slice();
+
+      // Apply filters
+      items = items.filter(r => r.score >= filters.minScore);
+      if(filters.edu !== "any"){
+        items = items.filter(r=>{
+          const c = getCareer(r.careerId);
+          return c && c.educationRequired === filters.edu;
+        });
+      }
+      if(filters.industry !== "any"){
+        items = items.filter(r=>{
+          const c = getCareer(r.careerId);
+          return c && c.industry === filters.industry;
+        });
+      }
+
+      // Sort
+      const sort = $("sortSelect")?.value || "score_desc";
+      if(sort === "score_desc") items.sort((a,b)=> b.score - a.score);
+      if(sort === "salary_desc") items.sort((a,b)=> salaryToNum(getCareer(b.careerId)?.salary?.mid) - salaryToNum(getCareer(a.careerId)?.salary?.mid));
+      if(sort === "alpha") items.sort((a,b)=> getCareer(a.careerId).title.localeCompare(getCareer(b.careerId).title));
+
+      $("recResultsText").textContent = `${items.length} results`;
+
+      items.forEach(r=>{
+        const c = getCareer(r.careerId);
+        const card = document.createElement("div");
+        card.className = "card";
+        card.style.padding = "12px";
+        card.style.background = "rgba(255,255,255,.9)";
+        card.style.boxShadow = "none";
+
+        const top = document.createElement("div");
+        top.style.display="flex";
+        top.style.justifyContent="space-between";
+        top.style.gap="12px";
+        top.style.flexWrap="wrap";
+        top.style.alignItems="flex-start";
+
+        const left = document.createElement("div");
+        left.innerHTML = `<h3 style="margin:0 0 4px;">${escapeHtml(c.title)}</h3>
+          <div class="muted" style="font-size:12px;">Industry: ${escapeHtml(c.industry)} · Salary: ${escapeHtml(c.salary.mid)} · Education: ${escapeHtml(c.educationRequired)}</div>`;
+
+        const right = document.createElement("div");
+        right.style.display="flex";
+        right.style.gap="8px";
+        right.style.flexWrap="wrap";
+        right.style.alignItems="center";
+
+        const scoreChip = document.createElement("span");
+        scoreChip.className = "chip good";
+        scoreChip.textContent = `${r.score}% match`;
+
+        const openBtn = document.createElement("button");
+        openBtn.className = "btn small primary";
+        openBtn.type="button";
+        openBtn.textContent = "Open";
+        openBtn.onclick = () => openCareer(c.id);
+
+        const favBtn = document.createElement("button");
+        favBtn.className = "btn small";
+        favBtn.type="button";
+        favBtn.textContent = isSaved(c.id) ? "★ Saved" : "☆ Save";
+        favBtn.onclick = () => { toggleSaveCareer(c.id); renderRecommendations(); };
+
+        right.appendChild(scoreChip);
+        right.appendChild(favBtn);
+        right.appendChild(openBtn);
+
+        top.appendChild(left);
+        top.appendChild(right);
+
+        const exp = document.createElement("details");
+        exp.style.marginTop="10px";
+        const sum = document.createElement("summary");
+        sum.textContent = "Why this was recommended";
+        sum.style.cursor="pointer";
+        sum.style.color="var(--primary-2)";
+        sum.style.fontWeight="700";
+        exp.appendChild(sum);
+
+        const body = document.createElement("div");
+        body.style.marginTop="10px";
+        body.innerHTML = `
+          <div class="notice">
+            <b>Aligned skills:</b> ${r.alignedSkills.length ? r.alignedSkills.map(s=>`<span class="chip good">${escapeHtml(s)}</span>`).join(" ") : "<span class='muted'>None yet</span>"}
+            <br/><b>Skill gaps to learn:</b> ${r.gaps.length ? r.gaps.map(s=>`<span class="chip warn">${escapeHtml(s)}</span>`).join(" ") : "<span class='muted'>None</span>"}
+            <hr style="border:0;border-top:1px solid rgba(0,0,0,.08); margin:10px 0;">
+            <b>Score breakdown:</b>
+            <ul style="margin:6px 0 0; padding-left:18px; line-height:1.55;">
+              ${r.breakdown.map(b=>`<li>${escapeHtml(b.label)}: <b>${b.value}%</b></li>`).join("")}
+            </ul>
+          </div>
+        `;
+        exp.appendChild(body);
+
+        card.appendChild(top);
+        card.appendChild(exp);
+        list.appendChild(card);
+      });
+
+      // Update feedback dropdown (analytics page)
+      const fbCareer = $("fbCareer");
+      if(fbCareer){
+        fbCareer.innerHTML = "";
+        state.careers.filter(c=>c.status==="published").forEach(c=>{
+          const o = document.createElement("option");
+          o.value = c.id;
+          o.textContent = c.title;
+          fbCareer.appendChild(o);
+        });
+      }
+    }
+
+    function getRecFilters(){
+      return {
+        minScore: Number($("filterMinScore")?.value || 0),
+        edu: $("filterEdu")?.value || "any",
+        industry: $("filterIndustry")?.value || "any"
+      };
+    }
+
+    function salaryToNum(s){
+      if(!s) return 0;
+      const m = String(s).match(/\$([\d]+)k/i);
+      return m ? Number(m[1]) : 0;
+    }
+
+    // --- Career details ---
+    function getCareer(id){ return state.careers.find(c=>c.id===id); }
+    function isSaved(id){ return !!state.savedCareers[id]; }
+    function toggleSaveCareer(id){
+      const c = getCareer(id);
+      if(!c) return;
+      if(state.savedCareers[id]){
+        delete state.savedCareers[id];
+        toast("Removed", `Removed ${c.title} from saved careers.`);
+      }else{
+        state.savedCareers[id] = { notes: state.savedCareers[id]?.notes || "", savedAt: Date.now() };
+        toast("Saved", `Saved ${c.title}.`);
+      }
+      saveState();
+      setGlobalKPIs();
+      updateAnalytics();
+      renderSaved();
+      renderCareer();
+    }
+
+    function openCareer(id){
+      state.selectedCareerId = id;
+      if(!state.exploredCareerIds.includes(id)) state.exploredCareerIds.push(id);
+      saveState();
+      renderCareer();
+      updateAnalytics();
+      goto("#career");
+    }
+
+    function renderCareer(){
+      const c = getCareer(state.selectedCareerId);
+      $("quickSaveCareerBtn").disabled = !c;
+      $("toggleSaveCareerBtn").disabled = !c;
+      if(!c){
+        $("careerTitle").textContent = "Career details";
+        $("careerMeta").textContent = "Select a career from Recommendations.";
+        $("careerDesc").textContent = "—";
+        $("careerResp").innerHTML = "";
+        $("careerSalary").textContent = "$—";
+        $("careerOutlook").textContent = "—";
+        $("careerSkills").innerHTML = "";
+        $("relatedCareers").innerHTML = "";
+        $("careerExplanation").textContent = "Open a career from recommendations to see the explanation.";
+        $("careerNotes").value = "";
+        $("toggleSaveCareerBtn").textContent = "★ Save";
+        return;
+      }
+
+      $("careerTitle").textContent = c.title;
+      $("careerMeta").textContent = `Industry: ${c.industry} · Education: ${c.educationRequired} · Updated: ${formatAgo(c.updatedAt)}`;
+      $("careerDesc").textContent = c.summary;
+      $("careerSalary").textContent = c.salary.entry + " → " + c.salary.senior;
+      $("careerOutlook").textContent = c.outlook;
+
+      $("careerResp").innerHTML = "";
+      c.responsibilities.forEach(r=>{
+        const li = document.createElement("li");
+        li.textContent = r;
+        $("careerResp").appendChild(li);
+      });
+
+      // skills: highlight aligned vs gaps based on onboarding
+      const skills = Object.keys(state.onboarding.skills || {}).map(s=>s.toLowerCase());
+      $("careerSkills").innerHTML = "";
+      c.requiredSkills.forEach(s=>{
+        const aligned = skills.some(x => x.includes(s.toLowerCase().split(" ")[0]) || s.toLowerCase().includes(x));
+        const chip = document.createElement("span");
+        chip.className = "chip " + (aligned ? "good" : "warn");
+        chip.textContent = s;
+        $("careerSkills").appendChild(chip);
+      });
+
+      // related careers
+      $("relatedCareers").innerHTML = "";
+      (c.related || []).forEach(cid=>{
+        const rc = getCareer(cid);
+        if(!rc) return;
+        const b = document.createElement("button");
+        b.type="button";
+        b.className="btn small";
+        b.textContent = rc.title;
+        b.onclick = () => openCareer(rc.id);
+        $("relatedCareers").appendChild(b);
+      });
+
+      // explanation from rec record
+      const rec = state.recs.find(r=>r.careerId===c.id);
+      if(rec){
+        $("careerExplanation").innerHTML = `
+          <b>Match score:</b> ${rec.score}%<br/>
+          <b>Aligned skills:</b> ${rec.alignedSkills.map(s=>`<span class="chip good">${escapeHtml(s)}</span>`).join(" ") || "<span class='muted'>None yet</span>"}<br/>
+          <b>Skill gaps:</b> ${rec.gaps.map(s=>`<span class="chip warn">${escapeHtml(s)}</span>`).join(" ") || "<span class='muted'>None</span>"}<br/>
+          <div class="footer-note">This is a user-friendly explanation (REQ-007), simulated from onboarding inputs.</div>
+        `;
+      }else{
+        $("careerExplanation").textContent = "No recommendation explanation available. Generate recommendations first.";
+      }
+
+      // notes & save status
+      $("careerNotes").value = state.savedCareers[c.id]?.notes || "";
+      $("toggleSaveCareerBtn").textContent = isSaved(c.id) ? "★ Saved" : "☆ Save";
+    }
+
+    function formatAgo(ts){
+      const d = Date.now() - ts;
+      const h = Math.round(d / 36e5);
+      if(h < 24) return h + "h ago";
+      const days = Math.round(h/24);
+      return days + "d ago";
+    }
+
+    // --- Roadmap ---
+    function getActiveRoadmap(){
+      if(!state.selectedCareerId) return null;
+      return state.roadmaps[state.selectedCareerId] || null;
+    }
+
+    function generateRoadmapForCareer(careerId){
+      const c = getCareer(careerId);
+      if(!c) return;
+      const oSkills = Object.keys(state.onboarding.skills || {});
+      const gaps = c.requiredSkills.filter(s => !oSkills.some(os => os.toLowerCase().includes(s.toLowerCase().split(" ")[0]) || s.toLowerCase().includes(os.toLowerCase())));
+      const milestones = [
+        {
+          id: uid("m"),
+          title: "Foundations",
+          desc: "Build fundamentals needed for the role.",
+          deadline: addDays(14),
+          activities: [
+            { id: uid("a"), title: "Complete fundamentals course", status:"Not started", resourceId: c.resources[0]?.id || null },
+            { id: uid("a"), title: "Practice with mini project", status:"Not started", resourceId: c.resources[2]?.id || null },
+          ]
+        },
+        {
+          id: uid("m"),
+          title: "Skill Gaps",
+          desc: gaps.length ? ("Focus on: " + gaps.join(", ")) : "You’re well-aligned. Deepen expertise with advanced topics.",
+          deadline: addDays(35),
+          activities: [
+            { id: uid("a"), title: "Learn and apply: " + (gaps[0] || c.requiredSkills[0]), status:"Not started", resourceId: c.resources[1]?.id || null },
+            { id: uid("a"), title: "Build a portfolio-ready project", status:"Not started", resourceId: c.resources[2]?.id || null },
+          ]
+        },
+        {
+          id: uid("m"),
+          title: "Career Prep",
+          desc: "Finalize resume/portfolio and prepare for interviews.",
+          deadline: addDays(56),
+          activities: [
+            { id: uid("a"), title: "Update resume to match job descriptions", status:"Not started", resourceId: null },
+            { id: uid("a"), title: "Mock interview + refine story", status:"Not started", resourceId: null },
+          ]
+        }
+      ];
+      state.roadmaps[careerId] = {
+        generatedAt: Date.now(),
+        generated: JSON.parse(JSON.stringify(milestones)),
+        milestones
+      };
+      saveState();
+      renderRoadmap();
+      updateAnalytics();
+      toast("Roadmap generated", "Milestones and activities created.");
+    }
+
+    function addDays(n){
+      const d = new Date();
+      d.setDate(d.getDate() + n);
+      return d.toISOString().slice(0,10);
+    }
+    function uid(prefix){ return prefix + Math.random().toString(16).slice(2,10); }
+
+    function roadmapProgress(){
+      const rm = getActiveRoadmap();
+      if(!rm) return {pct:0, done:0, total:0};
+      const acts = rm.milestones.flatMap(m=>m.activities);
+      const total = acts.length;
+      const done = acts.filter(a=>a.status==="Completed").length;
+      const pct = total ? Math.round((done/total)*100) : 0;
+      return {pct, done, total};
+    }
+
+    function renderRoadmap(){
+      const rm = getActiveRoadmap();
+      const c = getCareer(state.selectedCareerId);
+      if(!rm || !c){
+        $("roadmapSubtitle").textContent = "Generate a roadmap from a career page.";
+        $("milestoneList").innerHTML = "<div class='muted'>No roadmap yet.</div>";
+        $("resourceList").innerHTML = "";
+        $("roadmapProgressBar").style.width = "0%";
+        $("roadmapProgressText").textContent = "0% complete";
+        $("roadmapKpiDone").textContent = "0";
+        $("roadmapKpiTotal").textContent = "0";
+        return;
+      }
+      $("roadmapSubtitle").textContent = `Roadmap for: ${c.title}`;
+      const p = roadmapProgress();
+      $("roadmapProgressBar").style.width = p.pct + "%";
+      $("roadmapProgressText").textContent = `${p.pct}% complete`;
+      $("roadmapKpiDone").textContent = String(p.done);
+      $("roadmapKpiTotal").textContent = String(p.total);
+
+      const list = $("milestoneList");
+      list.innerHTML = "";
+      rm.milestones.forEach((m, idx)=>{
+        const card = document.createElement("div");
+        card.className = "card";
+        card.style.padding = "12px";
+        card.style.background = "rgba(255,255,255,.92)";
+        card.style.boxShadow = "none";
+
+        const head = document.createElement("div");
+        head.style.display="flex";
+        head.style.justifyContent="space-between";
+        head.style.gap="12px";
+        head.style.flexWrap="wrap";
+        head.style.alignItems="flex-start";
+
+        const left = document.createElement("div");
+        left.innerHTML = `<h3 style="margin:0 0 4px;">${idx+1}. ${escapeHtml(m.title)}</h3>
+          <div class="muted" style="font-size:12px;">Deadline: <b>${escapeHtml(m.deadline)}</b></div>
+          <div class="muted" style="margin-top:6px; line-height:1.5">${escapeHtml(m.desc)}</div>`;
+
+        const right = document.createElement("div");
+        right.style.display="flex";
+        right.style.gap="8px";
+        right.style.flexWrap="wrap";
+
+        const editBtn = document.createElement("button");
+        editBtn.className="btn small";
+        editBtn.type="button";
+        editBtn.textContent="Edit";
+        editBtn.onclick=()=> openMilestoneEditor(m.id);
+
+        const delBtn = document.createElement("button");
+        delBtn.className="btn small danger";
+        delBtn.type="button";
+        delBtn.textContent="Delete";
+        delBtn.onclick=()=>{
+          rm.milestones = rm.milestones.filter(x=>x.id!==m.id);
+          saveState();
+          renderRoadmap();
+          updateAnalytics();
+          toast("Milestone deleted", "Removed milestone from roadmap.");
+        };
+
+        right.appendChild(editBtn);
+        right.appendChild(delBtn);
+
+        head.appendChild(left);
+        head.appendChild(right);
+
+        const acts = document.createElement("div");
+        acts.style.marginTop="10px";
+        acts.className="grid";
+        acts.style.gap="8px";
+
+        m.activities.forEach(a=>{
+          const row = document.createElement("div");
+          row.className="card";
+          row.style.boxShadow="none";
+          row.style.borderRadius="12px";
+          row.style.padding="10px";
+          row.style.background = "rgba(249,250,251,.95)";
+          row.style.display="flex";
+          row.style.gap="10px";
+          row.style.justifyContent="space-between";
+          row.style.alignItems="center";
+          const leftA = document.createElement("div");
+          leftA.innerHTML = `<b>${escapeHtml(a.title)}</b><div class="tiny">Status: ${escapeHtml(a.status)}</div>`;
+          const rightA = document.createElement("div");
+          rightA.style.display="flex";
+          rightA.style.gap="8px";
+          rightA.style.alignItems="center";
+
+          const sel = document.createElement("select");
+          sel.innerHTML = `<option>Not started</option><option>In progress</option><option>Completed</option>`;
+          sel.value = a.status;
+          sel.onchange = () => {
+            a.status = sel.value;
+            saveState();
+            renderRoadmap();
+            updateAnalytics();
+          };
+
+          const resBtn = document.createElement("button");
+          resBtn.className="btn small";
+          resBtn.type="button";
+          resBtn.textContent = a.resourceId ? "Open resource" : "Add resource";
+          resBtn.onclick = () => openResourcePicker(m.id, a.id);
+
+          rightA.appendChild(sel);
+          rightA.appendChild(resBtn);
+
+          row.appendChild(leftA);
+          row.appendChild(rightA);
+          acts.appendChild(row);
+        });
+
+        card.appendChild(head);
+        card.appendChild(acts);
+        list.appendChild(card);
+      });
+
+      // Resources list (career resources)
+      $("resourceList").innerHTML = "";
+      (c.resources || []).forEach(r=>{
+        const chip = document.createElement("span");
+        chip.className = "chip";
+        chip.innerHTML = `<b>${escapeHtml(r.title)}</b> <span class="muted">(${escapeHtml(r.type)} · ${escapeHtml(r.duration)} · ${escapeHtml(r.cost)})</span>`;
+        $("resourceList").appendChild(chip);
+      });
+    }
+
+    function openMilestoneEditor(milestoneId){
+      const rm = getActiveRoadmap();
+      if(!rm) return;
+      const m = rm.milestones.find(x=>x.id===milestoneId);
+      if(!m) return;
+
+      const body = document.createElement("div");
+      body.className = "form";
+
+      const title = document.createElement("input");
+      title.type="text";
+      title.value = m.title;
+      const desc = document.createElement("textarea");
+      desc.value = m.desc;
+      const deadline = document.createElement("input");
+      deadline.type="text";
+      deadline.value = m.deadline;
+
+      body.appendChild(fieldWrap("Title", title));
+      body.appendChild(fieldWrap("Description", desc));
+      body.appendChild(fieldWrap("Deadline (YYYY-MM-DD)", deadline));
+
+      const saveBtn = document.createElement("button");
+      saveBtn.className="btn primary";
+      saveBtn.type="button";
+      saveBtn.textContent="Save milestone";
+      saveBtn.onclick=()=>{
+        m.title = title.value.trim() || m.title;
+        m.desc = desc.value.trim();
+        m.deadline = deadline.value.trim() || m.deadline;
+        saveState();
+        closeModal();
+        renderRoadmap();
+        toast("Saved", "Milestone updated.");
+      };
+
+      body.appendChild(saveBtn);
+      openModal("Edit milestone", "Customize your learning plan (REQ-012).", body);
+    }
+
+    function openResourcePicker(milestoneId, activityId){
+      const c = getCareer(state.selectedCareerId);
+      const rm = getActiveRoadmap();
+      if(!c || !rm) return;
+      const m = rm.milestones.find(x=>x.id===milestoneId);
+      const a = m?.activities.find(x=>x.id===activityId);
+      if(!a) return;
+
+      const body = document.createElement("div");
+      body.className="grid";
+      body.style.gap="10px";
+
+      const list = document.createElement("div");
+      list.className="grid";
+      list.style.gap="8px";
+
+      (c.resources || []).forEach(r=>{
+        const row = document.createElement("div");
+        row.className="card";
+        row.style.boxShadow="none";
+        row.style.padding="10px";
+        row.style.borderRadius="12px";
+        row.style.background="rgba(249,250,251,.95)";
+        row.innerHTML = `<b>${escapeHtml(r.title)}</b><div class="tiny">${escapeHtml(r.type)} · ${escapeHtml(r.provider)} · ${escapeHtml(r.duration)} · ${escapeHtml(r.cost)}</div>`;
+        const pick = document.createElement("button");
+        pick.className="btn small primary";
+        pick.type="button";
+        pick.textContent = "Select";
+        pick.onclick=()=>{
+          a.resourceId = r.id;
+          saveState();
+          closeModal();
+          renderRoadmap();
+          toast("Resource added", "Linked learning resource to activity.");
+        };
+        row.appendChild(document.createElement("div"));
+        row.appendChild(pick);
+        row.style.display="flex";
+        row.style.justifyContent="space-between";
+        row.style.alignItems="center";
+        list.appendChild(row);
+      });
+
+      const custom = document.createElement("div");
+      custom.className="card";
+      custom.style.boxShadow="none";
+      custom.style.background="rgba(255,255,255,.9)";
+      custom.style.borderRadius="12px";
+      custom.style.padding="10px";
+      custom.innerHTML = "<b>Add custom resource</b><div class='tiny'>Simulates adding a custom learning resource (REQ-012).</div>";
+      const t = document.createElement("input");
+      t.type="text";
+      t.placeholder="Title";
+      const u = document.createElement("input");
+      u.type="text";
+      u.placeholder="URL";
+      const add = document.createElement("button");
+      add.className="btn small primary";
+      add.type="button";
+      add.textContent="Add";
+      add.onclick=()=>{
+        if(!t.value.trim()) return toast("Missing title","Enter a resource title.");
+        const newRes = { id: uid("r"), title: t.value.trim(), type:"resource", provider:"Custom", duration:"—", cost:"—", url: u.value.trim() || "#" };
+        c.resources.push(newRes);
+        a.resourceId = newRes.id;
+        saveState();
+        closeModal();
+        renderRoadmap();
+        renderAdmin();
+        toast("Added", "Custom resource added.");
+      };
+      custom.appendChild(document.createElement("div"));
+      custom.appendChild(t);
+      custom.appendChild(u);
+      custom.appendChild(add);
+      custom.style.display="grid";
+      custom.style.gap="8px";
+
+      body.appendChild(list);
+      body.appendChild(custom);
+
+      openModal("Select learning resource", "Pick a curated resource for this activity.", body);
+    }
+
+    // --- Checklists ---
+    function renderChecklists(){
+      const resume = $("resumeChecklist");
+      const portfolio = $("portfolioChecklist");
+      resume.innerHTML = "";
+      portfolio.innerHTML = "";
+
+      state.checklists.resume.items.forEach(item=>{
+        resume.appendChild(checkItem(item, () => {
+          item.done = !item.done;
+          saveState();
+          renderChecklists();
+          updateAnalytics();
+        }));
+      });
+
+      if(state.checklists.portfolio.enabled){
+        state.checklists.portfolio.items.forEach(item=>{
+          portfolio.appendChild(checkItem(item, () => {
+            item.done = !item.done;
+            saveState();
+            renderChecklists();
+            updateAnalytics();
+          }));
+        });
+      }else{
+        portfolio.innerHTML = "<div class='muted'>Portfolio checklist hidden.</div>";
+      }
+      $("portfolioToggle").checked = state.checklists.portfolio.enabled;
+    }
+
+    function checkItem(item, onToggle){
+      const row = document.createElement("div");
+      row.className = "card";
+      row.style.boxShadow="none";
+      row.style.padding="10px";
+      row.style.borderRadius="12px";
+      row.style.background="rgba(255,255,255,.9)";
+      row.style.display="flex";
+      row.style.justifyContent="space-between";
+      row.style.alignItems="center";
+      row.style.gap="10px";
+
+      const left = document.createElement("div");
+      left.innerHTML = `<b>${escapeHtml(item.label)}</b>${item.tip ? `<div class="tiny">${escapeHtml(item.tip)}</div>` : ""}`;
+
+      const btn = document.createElement("button");
+      btn.type="button";
+      btn.className = "btn small " + (item.done ? "primary" : "");
+      btn.textContent = item.done ? "Completed" : "Mark done";
+      btn.onclick = onToggle;
+
+      row.appendChild(left);
+      row.appendChild(btn);
+      return row;
+    }
+
+    function pctDone(items){
+      const total = items.length;
+      const done = items.filter(i=>i.done).length;
+      return total ? Math.round((done/total)*100) : 0;
+    }
+
+    // --- Job tracker ---
+    function renderJobs(){
+      const body = $("jobTableBody");
+      body.innerHTML = "";
+      state.jobApps.forEach(app=>{
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td><b>${escapeHtml(app.company)}</b></td>
+          <td>${escapeHtml(app.role)}</td>
+          <td>${statusChip(app.status)}</td>
+          <td>${escapeHtml(app.date)}</td>
+          <td class="muted">${escapeHtml(app.next || "—")}</td>
+          <td><button class="btn small" type="button" data-edit="${escapeHtml(app.id)}">Edit</button></td>
+        `;
+        body.appendChild(tr);
+      });
+
+      $$("#jobTableBody button[data-edit]").forEach(btn=>{
+        btn.onclick = () => openJobEditor(btn.getAttribute("data-edit"));
+      });
+
+      $("jobStatsText").textContent = `${state.jobApps.length} applications`;
+      renderKanban();
+      updateAnalytics();
+    }
+
+    function statusChip(status){
+      const s = String(status).toLowerCase();
+      let cls = "chip";
+      if(s.includes("offer") || s.includes("interview")) cls += " good";
+      if(s.includes("rejected") || s.includes("withdrawn")) cls += " bad";
+      if(s.includes("applied") || s.includes("saved")) cls += " warn";
+      return `<span class="${cls}">${escapeHtml(status)}</span>`;
+    }
+
+    function renderKanban(){
+      const board = $("kanbanBoard");
+      board.innerHTML = "";
+      const lanes = ["Saved","Applied","Interview Scheduled","Offer Received"];
+      lanes.forEach(l=>{
+        const lane = document.createElement("div");
+        lane.className="lane";
+        lane.innerHTML = `<h4>${escapeHtml(l)}</h4>`;
+        const items = state.jobApps.filter(j => j.status === l);
+        if(!items.length){
+          const empty = document.createElement("div");
+          empty.className="muted";
+          empty.style.fontSize="12px";
+          empty.textContent="No items";
+          lane.appendChild(empty);
+        }else{
+          items.forEach(j=>{
+            const jc = document.createElement("div");
+            jc.className="jobcard";
+            jc.innerHTML = `<b>${escapeHtml(j.company)}</b><div class="meta">${escapeHtml(j.role)}</div>`;
+            lane.appendChild(jc);
+          });
+        }
+        board.appendChild(lane);
+      });
+    }
+
+    function openJobEditor(jobId){
+      const job = state.jobApps.find(j=>j.id===jobId);
+      const isNew = !job;
+      const draft = job ? {...job} : { id: uid("j"), company:"", role:"", status:"Saved", date:new Date().toISOString().slice(0,10), next:"", url:"#", contact:"", notes:"" };
+
+      const body = document.createElement("div");
+      body.className = "form";
+
+      const company = inputText(draft.company);
+      const role = inputText(draft.role);
+      const status = document.createElement("select");
+      status.innerHTML = `<option>Saved</option><option>Applied</option><option>Interview Scheduled</option><option>Interviewed</option><option>Offer Received</option><option>Rejected</option><option>Withdrawn</option>`;
+      status.value = draft.status;
+      const date = inputText(draft.date);
+      const next = inputText(draft.next);
+      const url = inputText(draft.url);
+      const contact = inputText(draft.contact);
+      const notes = document.createElement("textarea");
+      notes.value = draft.notes;
+
+      body.appendChild(fieldWrap("Company", company));
+      body.appendChild(fieldWrap("Role", role));
+      body.appendChild(fieldWrap("Status", status));
+      body.appendChild(fieldWrap("Application date", date));
+      body.appendChild(fieldWrap("Follow-up / next step", next));
+      body.appendChild(fieldWrap("Job posting URL", url));
+      body.appendChild(fieldWrap("Contact", contact));
+      body.appendChild(fieldWrap("Notes", notes));
+
+      const actions = document.createElement("div");
+      actions.style.display="flex";
+      actions.style.gap="10px";
+      actions.style.flexWrap="wrap";
+
+      const saveBtn = document.createElement("button");
+      saveBtn.className="btn primary";
+      saveBtn.type="button";
+      saveBtn.textContent= isNew ? "Add application" : "Save changes";
+      saveBtn.onclick=()=>{
+        draft.company = company.value.trim();
+        draft.role = role.value.trim();
+        draft.status = status.value;
+        draft.date = date.value.trim();
+        draft.next = next.value.trim();
+        draft.url = url.value.trim() || "#";
+        draft.contact = contact.value.trim();
+        draft.notes = notes.value.trim();
+        if(!draft.company || !draft.role) return toast("Missing fields","Company and role are required.");
+
+        if(isNew) state.jobApps.unshift(draft);
+        else Object.assign(job, draft);
+
+        saveState();
+        closeModal();
+        renderJobs();
+        toast("Saved", "Job application updated.");
+      };
+
+      const delBtn = document.createElement("button");
+      delBtn.className="btn danger";
+      delBtn.type="button";
+      delBtn.textContent="Delete";
+      delBtn.onclick=()=>{
+        state.jobApps = state.jobApps.filter(j=>j.id!==draft.id);
+        saveState();
+        closeModal();
+        renderJobs();
+        toast("Deleted","Job application removed.");
+      };
+
+      actions.appendChild(saveBtn);
+      if(!isNew) actions.appendChild(delBtn);
+      body.appendChild(actions);
+
+      openModal(isNew ? "Add job application" : "Edit job application", "Track job search details (REQ-019).", body);
+    }
+
+    function inputText(value){
+      const i = document.createElement("input");
+      i.type="text";
+      i.value=value || "";
+      return i;
+    }
+
+    // --- Saved careers ---
+    function renderSaved(){
+      const wrap = $("savedList");
+      if(!wrap) return;
+      wrap.innerHTML = "";
+      const ids = Object.keys(state.savedCareers);
+      if(!ids.length){
+        wrap.innerHTML = "<div class='muted'>No saved careers yet. Save careers from Recommendations or Career Details.</div>";
+        return;
+      }
+      ids
+        .map(id=>getCareer(id))
+        .filter(Boolean)
+        .forEach(c=>{
+          const card = document.createElement("div");
+          card.className="card";
+          card.style.padding="12px";
+          card.style.boxShadow="none";
+          card.style.background="rgba(255,255,255,.9)";
+          const notes = state.savedCareers[c.id]?.notes || "";
+
+          card.innerHTML = `
+            <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-start;">
+              <div>
+                <h3 style="margin:0 0 4px;">${escapeHtml(c.title)}</h3>
+                <div class="muted" style="font-size:12px;">${escapeHtml(c.summary)}</div>
+              </div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <button class="btn small" type="button" data-open="${escapeHtml(c.id)}">Open</button>
+                <button class="btn small danger" type="button" data-unsave="${escapeHtml(c.id)}">Remove</button>
+              </div>
+            </div>
+            <div class="field" style="margin-top:10px;">
+              <label>Notes</label>
+              <textarea data-notes="${escapeHtml(c.id)}" placeholder="Add notes...">${escapeHtml(notes)}</textarea>
+            </div>
+            <button class="btn small primary" type="button" data-save-notes="${escapeHtml(c.id)}">Save notes</button>
+          `;
+          wrap.appendChild(card);
+        });
+
+      $$("button[data-open]").forEach(b=> b.onclick = ()=> openCareer(b.getAttribute("data-open")));
+      $$("button[data-unsave]").forEach(b=> b.onclick = ()=> toggleSaveCareer(b.getAttribute("data-unsave")));
+      $$("button[data-save-notes]").forEach(b=> b.onclick = ()=>{
+        const id = b.getAttribute("data-save-notes");
+        const ta = document.querySelector(`textarea[data-notes="${CSS.escape(id)}"]`);
+        if(ta){
+          state.savedCareers[id].notes = ta.value;
+          saveState();
+          toast("Saved","Notes updated.");
+        }
+      });
+    }
+
+    // --- Profile / Auth ---
+    function hydrateProfileForm(){
+      $("pfFirst").value = state.user.firstName || "";
+      $("pfLast").value = state.user.lastName || "";
+      $("pfEmail").value = state.user.email || "";
+      $("pfBio").value = state.user.bio || "";
+    }
+
+    // --- Admin CMS ---
+    function renderAdmin(){
+      const body = $("adminCareersBody");
+      body.innerHTML = "";
+      state.careers.forEach(c=>{
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td><b>${escapeHtml(c.title)}</b><div class="tiny">${escapeHtml(c.id)}</div></td>
+          <td>${escapeHtml(c.status)}</td>
+          <td>${escapeHtml(c.industry)}</td>
+          <td class="muted">${formatAgo(c.updatedAt)}</td>
+          <td>
+            <button class="btn small" type="button" data-edit-career="${escapeHtml(c.id)}">Edit</button>
+          </td>
+        `;
+        body.appendChild(tr);
+      });
+      $$("button[data-edit-career]").forEach(b=> b.onclick = ()=> openCareerAdminEditor(b.getAttribute("data-edit-career")));
+
+      // Skills sample derived from careers required skills
+      const skills = new Set();
+      state.careers.forEach(c => c.requiredSkills.forEach(s=>skills.add(s)));
+      $("adminSkillsWrap").innerHTML = "";
+      Array.from(skills).slice(0,18).forEach(s=>{
+        const chip = document.createElement("span");
+        chip.className="chip";
+        chip.textContent = s;
+        $("adminSkillsWrap").appendChild(chip);
+      });
+
+      // Resources sample
+      $("adminResourcesWrap").innerHTML = "";
+      const res = [];
+      state.careers.forEach(c => (c.resources||[]).forEach(r => res.push(r)));
+      res.slice(0,14).forEach(r=>{
+        const chip = document.createElement("span");
+        chip.className="chip";
+        chip.innerHTML = `<b>${escapeHtml(r.title)}</b> <span class="muted">(${escapeHtml(r.type)})</span>`;
+        $("adminResourcesWrap").appendChild(chip);
+      });
+
+      // admin toggle button label
+      $("toggleAdminBtn").textContent = state.session.isAdmin ? "Disable admin mode" : "Enable admin mode";
+
+      // Update system metrics
+      updateAnalytics();
+    }
+
+    function openCareerAdminEditor(careerId){
+      const c = getCareer(careerId);
+      if(!c) return;
+
+      const body = document.createElement("div");
+      body.className = "form";
+
+      const title = inputText(c.title);
+      const industry = document.createElement("select");
+      industry.innerHTML = `<option value="tech">tech</option><option value="data">data</option><option value="design">design</option><option value="business">business</option>`;
+      industry.value = c.industry;
+
+      const status = document.createElement("select");
+      status.innerHTML = `<option value="draft">draft</option><option value="published">published</option><option value="archived">archived</option>`;
+      status.value = c.status;
+
+      const summary = document.createElement("textarea");
+      summary.value = c.summary;
+
+      const skills = inputText(c.requiredSkills.join(", "));
+      const related = inputText((c.related || []).join(", "));
+
+      body.appendChild(fieldWrap("Title", title));
+      body.appendChild(fieldWrap("Industry", industry));
+      body.appendChild(fieldWrap("Status", status));
+      body.appendChild(fieldWrap("Summary", summary));
+      body.appendChild(fieldWrap("Required skills (comma-separated)", skills));
+      body.appendChild(fieldWrap("Related career IDs (comma-separated)", related));
+
+      const saveBtn = document.createElement("button");
+      saveBtn.className="btn primary";
+      saveBtn.type="button";
+      saveBtn.textContent="Save changes";
+      saveBtn.onclick=()=>{
+        c.title = title.value.trim() || c.title;
+        c.industry = industry.value;
+        c.status = status.value;
+        c.summary = summary.value.trim();
+        c.requiredSkills = skills.value.split(",").map(s=>s.trim()).filter(Boolean);
+        c.related = related.value.split(",").map(s=>s.trim()).filter(Boolean);
+        c.updatedAt = Date.now();
+        saveState();
+        closeModal();
+        renderAdmin();
+        generateRecommendations();
+        toast("Saved", "Career updated (prototype).");
+      };
+
+      body.appendChild(saveBtn);
+
+      openModal("Edit career", "Admin CMS career management (REQ-021).", body);
+    }
+
+    function openCareerAdminNew(){
+      const body = document.createElement("div");
+      body.className="form";
+      const title = inputText("");
+      const industry = document.createElement("select");
+      industry.innerHTML = `<option value="tech">tech</option><option value="data">data</option><option value="design">design</option><option value="business">business</option>`;
+      const status = document.createElement("select");
+      status.innerHTML = `<option value="draft">draft</option><option value="published">published</option><option value="archived">archived</option>`;
+      const summary = document.createElement("textarea");
+      summary.placeholder = "Short career summary...";
+      const skills = inputText("SQL, Communication");
+      body.appendChild(fieldWrap("Title", title));
+      body.appendChild(fieldWrap("Industry", industry));
+      body.appendChild(fieldWrap("Status", status));
+      body.appendChild(fieldWrap("Summary", summary));
+      body.appendChild(fieldWrap("Required skills (comma-separated)", skills));
+
+      const saveBtn = document.createElement("button");
+      saveBtn.className="btn primary";
+      saveBtn.type="button";
+      saveBtn.textContent="Create career";
+      saveBtn.onclick=()=>{
+        if(!title.value.trim()) return toast("Missing title","Enter a career title.");
+        const c = {
+          id: uid("c_"),
+          title: title.value.trim(),
+          industry: industry.value,
+          status: status.value,
+          updatedAt: Date.now(),
+          summary: summary.value.trim() || "New career summary",
+          responsibilities: ["Define responsibilities...","Add day-to-day tasks..."],
+          salary: { entry:"$60k–$80k", mid:"$80k–$110k", senior:"$110k–$150k" },
+          outlook: "Moderate",
+          educationRequired: "bachelor",
+          requiredSkills: skills.value.split(",").map(s=>s.trim()).filter(Boolean),
+          related: [],
+          resources: []
+        };
+        state.careers.unshift(c);
+        saveState();
+        closeModal();
+        renderAdmin();
+        generateRecommendations();
+        toast("Created","New career created.");
+      };
+
+      body.appendChild(saveBtn);
+      openModal("New career", "Create a new career entry (REQ-021).", body);
+    }
+
+    // --- Analytics ---
+    function updateAnalytics(){
+      // user
+      const onboardPct = onboardingCompletionPct();
+      const rm = getActiveRoadmap();
+      const rp = roadmapProgress();
+      $("anOnboard").textContent = onboardPct + "%";
+      $("anRoadmap").textContent = rp.pct + "%";
+      $("anExplored").textContent = String(state.exploredCareerIds.length);
+      $("anSaved").textContent = String(Object.keys(state.savedCareers).length);
+      $("anJobs").textContent = String(state.jobApps.length);
+      $("anResume").textContent = pctDone(state.checklists.resume.items) + "%";
+      $("anPortfolio").textContent = state.checklists.portfolio.enabled ? (pctDone(state.checklists.portfolio.items) + "%") : "—";
+      $("anFeedback").textContent = String(state.feedback.length);
+
+      // system/admin
+      const published = state.careers.filter(c=>c.status==="published");
+      $("sysCareers").textContent = String(published.length);
+      $("sysQRate").textContent = state.session.isAuthed ? (state.onboarding.completed ? "100%" : "0%") : "0%";
+      $("sysAvgRecs").textContent = state.session.isAuthed ? String(state.recs.length) : "0";
+
+      // top saved career
+      const savedIds = Object.keys(state.savedCareers);
+      $("sysTopCareer").textContent = savedIds.length ? (getCareer(savedIds[0])?.title || "—") : "—";
+    }
+
+    // --- Modal helper ---
+    function openModal(title, sub, bodyEl){
+      $("modalTitle").textContent = title;
+      $("modalSub").textContent = sub;
+      const b = $("modalBody");
+      b.innerHTML = "";
+      b.appendChild(bodyEl);
+      $("modalBackdrop").classList.add("show");
+      $("modalBackdrop").setAttribute("aria-hidden","false");
+    }
+    function closeModal(){
+      $("modalBackdrop").classList.remove("show");
+      $("modalBackdrop").setAttribute("aria-hidden","true");
+    }
+
+    function escapeHtml(str){
+      return String(str ?? "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    // --- Wiring ---
+    function bindGlobal(){
+      window.addEventListener("hashchange", () => {
+        const route = routeFromHash();
+        showRoute(route);
+        if(route === "onboarding") onboardingPanel();
+        if(route === "recommendations") renderRecommendations();
+        if(route === "career") renderCareer();
+        if(route === "roadmap") renderRoadmap();
+        if(route === "jobtracker") renderJobs();
+        if(route === "saved") renderSaved();
+        if(route === "profile") hydrateProfileForm();
+        if(route === "admin") renderAdmin();
+        if(route === "checklists") renderChecklists();
+        if(route === "analytics") updateAnalytics();
+        setPrimaryCTA();
+        setGlobalKPIs();
+      });
+
+      // Global nav buttons
+      $$("[data-nav]").forEach(b=>{
+        b.addEventListener("click", () => goto(b.getAttribute("data-nav")));
+      });
+
+      $("resetBtn").onclick = () => {
+        localStorage.removeItem(STORAGE_KEY);
+        state = seed();
+        saveState();
+        toast("Reset", "Demo data reset.");
+        init();
+        goto("#welcome");
+      };
+
+      // Auth flows
+      $("loginForm").addEventListener("submit", (e)=>{
+        e.preventDefault();
+        state.session.isAuthed = true;
+        state.user.email = $("loginEmail").value.trim() || state.user.email;
+        saveState();
+        toast("Logged in", "Welcome back!");
+        setRolePill();
+        setPrimaryCTA();
+        hydrateProfileForm();
+        goto(state.onboarding.completed ? "#recommendations" : "#onboarding");
+      });
+
+      $("signupForm").addEventListener("submit", (e)=>{
+        e.preventDefault();
+        state.session.isAuthed = true;
+        state.user.firstName = $("firstName").value.trim();
+        state.user.lastName = $("lastName").value.trim();
+        state.user.email = $("signupEmail").value.trim();
+        saveState();
+        toast("Account created", "Now complete onboarding.");
+        setRolePill();
+        hydrateProfileForm();
+        goto("#onboarding");
+      });
+
+      $("mockForgotBtn").onclick = () => {
+        toast("Password reset", "A reset link would be emailed (simulated).");
+      };
+
+      // Recommendations controls
+      $("regenRecsBtn").onclick = () => { generateRecommendations(); toast("Updated","Recommendations regenerated."); };
+      $("sortSelect").onchange = () => renderRecommendations();
+      $("applyRecFiltersBtn").onclick = () => renderRecommendations();
+      $("clearRecFiltersBtn").onclick = () => {
+        $("filterMinScore").value = "0";
+        $("filterEdu").value = "any";
+        $("filterIndustry").value = "any";
+        renderRecommendations();
+      };
+      $("openFiltersBtn").onclick = () => toast("Filters", "Use the quick filters panel on the left of this page.");
+
+      // Career page actions
+      $("toggleSaveCareerBtn").onclick = () => { if(state.selectedCareerId) toggleSaveCareer(state.selectedCareerId); };
+      $("quickSaveCareerBtn").onclick = () => { if(state.selectedCareerId) toggleSaveCareer(state.selectedCareerId); else toast("No career selected","Open a career first."); };
+      $("generateRoadmapBtn").onclick = () => {
+        if(!state.selectedCareerId) return toast("No career selected","Open a career first.");
+        generateRoadmapForCareer(state.selectedCareerId);
+        goto("#roadmap");
+      };
+      $("saveCareerNotesBtn").onclick = () => {
+        const id = state.selectedCareerId;
+        if(!id) return toast("No career selected","Open a career first.");
+        if(!state.savedCareers[id]) state.savedCareers[id] = { notes:"", savedAt: Date.now() };
+        state.savedCareers[id].notes = $("careerNotes").value;
+        saveState();
+        toast("Saved","Career notes saved.");
+        renderSaved();
+        setGlobalKPIs();
+      };
+      $("goToSavedBtn").onclick = () => goto("#saved");
+
+      // Roadmap controls
+      $("addMilestoneBtn").onclick = () => {
+        const rm = getActiveRoadmap();
+        if(!rm) return toast("No roadmap","Generate a roadmap first.");
+        rm.milestones.push({
+          id: uid("m"),
+          title: "Custom milestone",
+          desc: "Describe your custom milestone.",
+          deadline: addDays(21),
+          activities: [{ id: uid("a"), title:"Custom activity", status:"Not started", resourceId:null }]
+        });
+        saveState();
+        renderRoadmap();
+        toast("Added","Milestone added.");
+      };
+      $("resetRoadmapBtn").onclick = () => {
+        const rm = getActiveRoadmap();
+        if(!rm) return;
+        rm.milestones = JSON.parse(JSON.stringify(rm.generated));
+        saveState();
+        renderRoadmap();
+        toast("Reverted","Roadmap reverted to generated version.");
+      };
+      $("exportRoadmapBtn").onclick = () => toast("Export", "PDF export would be generated server-side (simulated).");
+
+      // Checklists
+      $("portfolioToggle").onchange = () => {
+        state.checklists.portfolio.enabled = $("portfolioToggle").checked;
+        saveState();
+        renderChecklists();
+        updateAnalytics();
+      };
+      $("resumeResetBtn").onclick = () => {
+        state.checklists.resume.items.forEach(i=>i.done=false);
+        saveState();
+        renderChecklists();
+        updateAnalytics();
+        toast("Reset","Resume checklist reset.");
+      };
+      $("downloadTemplatesBtn").onclick = () => toast("Templates", "Templates would download here (simulated).");
+
+      // Jobs
+      $("addJobBtn").onclick = () => openJobEditor(null);
+      $("toggleJobViewBtn").onclick = () => {
+        const isKanban = !$("jobKanbanView").hidden;
+        $("jobKanbanView").hidden = isKanban;
+        $("jobListView").hidden = !isKanban;
+        $("toggleJobViewBtn").textContent = isKanban ? "Switch to Kanban" : "Switch to List";
+      };
+
+      // Profile
+      $("profileForm").addEventListener("submit", (e)=>{
+        e.preventDefault();
+        state.user.firstName = $("pfFirst").value.trim();
+        state.user.lastName = $("pfLast").value.trim();
+        state.user.email = $("pfEmail").value.trim();
+        state.user.bio = $("pfBio").value.trim();
+        saveState();
+        toast("Saved","Profile updated.");
+      });
+      $("logoutBtn").onclick = () => {
+        state.session.isAuthed = false;
+        state.session.isAdmin = false;
+        saveState();
+        toast("Logged out","You are now logged out.");
+        setRolePill();
+        goto("#welcome");
+      };
+      $("retakeOnboardingBtn").onclick = () => {
+        state.onboarding.completed = false;
+        state.onboarding.step = 1;
+        saveState();
+        toast("Reset","Onboarding marked incomplete. Retake now.");
+        goto("#onboarding");
+      };
+      $("goToAnalyticsBtn").onclick = () => goto("#analytics");
+
+      // Admin
+      $("toggleAdminBtn").onclick = () => {
+        if(!state.session.isAuthed) return toast("Login required","Please log in first.");
+        state.session.isAdmin = !state.session.isAdmin;
+        saveState();
+        setRolePill();
+        renderAdmin();
+        toast("Role updated", state.session.isAdmin ? "Admin mode enabled." : "Admin mode disabled.");
+      };
+      $("adminNewCareerBtn").onclick = () => {
+        if(!state.session.isAdmin) return toast("Admin only","Enable admin mode to create content (simulated).");
+        openCareerAdminNew();
+      };
+      $("adminAddSkillBtn").onclick = () => toast("Not implemented", "Skills CRUD is simulated via career editor required skills.");
+      $("adminAddResourceBtn").onclick = () => toast("Not implemented", "Resource CRUD is simulated via roadmap resource picker.");
+
+      // Analytics feedback
+      $("feedbackForm").addEventListener("submit", (e)=>{
+        e.preventDefault();
+        const careerId = $("fbCareer").value;
+        state.feedback.unshift({
+          careerId,
+          helpful: $("fbHelpful").value,
+          comment: $("fbComment").value.trim(),
+          createdAt: Date.now()
+        });
+        $("fbComment").value = "";
+        saveState();
+        updateAnalytics();
+        toast("Thanks!", "Feedback submitted (simulated).");
+      });
+
+      // Modal close
+      $("modalCloseBtn").onclick = closeModal;
+      $("modalBackdrop").addEventListener("click", (e)=>{
+        if(e.target === $("modalBackdrop")) closeModal();
+      });
+
+      // Primary CTA
+      setPrimaryCTA();
+
+      // Global search (lightweight: jump to best match in careers)
+      $("globalSearch").addEventListener("keydown", (e)=>{
+        if(e.key !== "Enter") return;
+        const q = $("globalSearch").value.trim().toLowerCase();
+        if(!q) return;
+        const c = state.careers.find(c => c.title.toLowerCase().includes(q) || c.requiredSkills.some(s=>s.toLowerCase().includes(q)));
+        if(c){
+          openCareer(c.id);
+          toast("Search", `Opened: ${c.title}`);
+        }else{
+          toast("Search", "No matches. Try 'data', 'frontend', 'design', or 'sql'.");
+        }
+      });
+    }
+
+    function init(){
+      // Ensure at least basic recs if onboarding complete
+      if(state.onboarding.completed && !state.recs.length) generateRecommendations();
+      setRolePill();
+      setPrimaryCTA();
+      setGlobalKPIs();
+      hydrateProfileForm();
+      renderRecommendations();
+      renderCareer();
+      renderRoadmap();
+      renderJobs();
+      renderSaved();
+      renderAdmin();
+      renderChecklists();
+      updateAnalytics();
+      // Set initial route
+      const route = routeFromHash();
+      showRoute(route);
+    }
+
+    // Init wire-up
+    bindGlobal();
+    init();
+  </script>
+</body>
+</html>
